@@ -1,4 +1,6 @@
-﻿using Freelance_Api.Models;
+﻿using System;
+using System.Collections;
+using Freelance_Api.Models;
 using Freelance_Api.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -14,17 +16,24 @@ namespace Freelance_Api
     {
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            var conf = new ConfigurationBuilder().AddConfiguration(configuration).AddEnvironmentVariables().Build();
+            Configuration = conf;
+            
+            
+            
         }
 
-        public IConfiguration Configuration { get; }
+        public IConfiguration Configuration { get; set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
-
-        {
-            services.Configure<DatabaseSettings>(
-                Configuration.GetSection(nameof(DatabaseSettings)));
+        
+        {   
+         
+            
+           
+            services.Configure<DatabaseSettings>(Configuration);
+            
             
             services.AddSwaggerGen(c =>
             {
@@ -57,7 +66,7 @@ namespace Freelance_Api
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
+         
             app.UseHttpsRedirection();
             app.UseMvc();
         }
