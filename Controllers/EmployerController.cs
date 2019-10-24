@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Collections.Generic;
+using Freelance_Api.Models;
+using Freelance_Api.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Freelance_Api.Controllers
 {
@@ -20,7 +23,7 @@ namespace Freelance_Api.Controllers
         [HttpGet("{id:length(24)}")]
         public ActionResult<Employe> Get(string id)
         {
-            var employe = _employeService.Get(id);
+            var employe = _employerService.Get(id);
 
             if (employe == null)
             {
@@ -30,10 +33,10 @@ namespace Freelance_Api.Controllers
             return employe;
         }
         
-        HttpPost]
+        [HttpPost]
         public ActionResult<Employe> Create(Employe employe)
         {
-            _employeService.Create(employe);
+            _employerService.Create(employe);
 
             return employe;
         }
@@ -41,14 +44,14 @@ namespace Freelance_Api.Controllers
         [HttpPut("{id:length(24)}")]
         public IActionResult Update(string id, Employe employein)
         {
-            var emplpye = _employeService.Get(id);
+            var emplpye = _employerService.Get(id);
 
             if (emplpye == null)
             {
                 return NotFound();
             }
 
-            _employeService.Update(id, employein);
+            _employerService.Update(id, employein);
 
             return NoContent();
         }
@@ -56,14 +59,14 @@ namespace Freelance_Api.Controllers
         [HttpDelete("{id:length(24)}")]
         public IActionResult Delete(string id)
         {
-            var employe = _employeService.Get(id);
+            var employe = _employerService.Get(id);
 
             if (employe == null)
             {
                 return NotFound();
             }
 
-            _employeService.Remove(employe.Id);
+            _employerService.Remove(employe.Id);
 
             return NoContent();
         }
