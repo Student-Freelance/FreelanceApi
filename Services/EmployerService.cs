@@ -13,11 +13,11 @@ namespace Freelance_Api.Services
         {
             var client = new MongoClient(settings.ConnectionString);
             var database = client.GetDatabase(settings.DatabaseName);
-            _employe = database.GetCollection<Employe>(settings.JobCollectionName);
+            _employe = database.GetCollection<Employe>(settings.EmployerCollectionName);
         }
 
         public List<Employe> Get() =>
-            _employe.Find(_employe => true).ToList();
+            _employe.Find(employe => true).ToList();
 
         public Employe Get(string id) =>
             _employe.Find(employe => employe.Id == id).FirstOrDefault();
