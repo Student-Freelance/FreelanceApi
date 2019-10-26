@@ -1,13 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using Freelance_Api.Extensions;
-using Microsoft.AspNetCore.WebUtilities;
 using Newtonsoft.Json;
 
 namespace Freelance_Api.Controllers.APIs
@@ -16,12 +11,12 @@ namespace Freelance_Api.Controllers.APIs
     [ApiController]
     public class ReposController : ControllerBase
     {
-        [HttpPost("{nameFromEndPoint}/repos")]
+        [HttpPost("{userNameFromEndPoint}/repos")]
         [AllowAnonymous]
-        public async Task<IActionResult> PostAsync(string nameFromEndPoint)
+        public async Task<IActionResult> PostAsync(string userNameFromEndPoint)
         {
             int responseStatusCode;
-            var responseFromHttpRequest = await CVRNameHTTPRequestAsync(nameFromEndPoint);
+            var responseFromHttpRequest = await GithubReposHTTPRequestAsync(userNameFromEndPoint);
             var responseContentFromHttpRequest = await responseFromHttpRequest.Content.ReadAsStringAsync();
      
             responseStatusCode = (int) responseFromHttpRequest.StatusCode;
@@ -36,7 +31,7 @@ namespace Freelance_Api.Controllers.APIs
             return Ok(responseContentFromHttpRequestToJSON);
         }
         
-        protected async Task<HttpResponseMessage> CVRNameHTTPRequestAsync(string nameFromQuery)
+        protected async Task<HttpResponseMessage> GithubReposHTTPRequestAsync(string userNameFromQuery)
         {
             string baseApiURL = "https://api.github.com/users/";
 
@@ -45,7 +40,7 @@ namespace Freelance_Api.Controllers.APIs
             client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent",
                             "Freelance-Portal");
             
-            string baseApiURLWithParameter = String.Format("https://api.github.com/users/{0}/repos", nameFromQuery);
+            string baseApiURLWithParameter = String.Format("https://api.github.com/users/{0}/repos", userNameFromQuery);
    
             var response = await client.GetAsync(baseApiURLWithParameter);
             
