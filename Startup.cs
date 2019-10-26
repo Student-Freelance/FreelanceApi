@@ -31,6 +31,12 @@ namespace Freelance_Api
             {
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "Freelance API", Version = "v1"});
             });
+            
+            services.AddMvc()
+                .AddNewtonsoftJson();
+            services.AddControllers()
+                .AddNewtonsoftJson();
+            
             services.AddControllers();
             services.AddSingleton<IDatabaseSettings>(sp =>
                 sp.GetRequiredService<IOptions<DatabaseSettings>>().Value);
