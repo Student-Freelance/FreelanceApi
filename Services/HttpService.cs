@@ -1,37 +1,15 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Freelance_Api.Models.APIs.Login.CampusNet;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 
-namespace Freelance_Api.Controllers.APIs.Login
+namespace Freelance_Api.Services
 {
-    [Route("api/login/[controller]")]
-    [ApiController]
-    public class CampusNetController : ControllerBase
+    public class HttpService
     {
-        [HttpPost]
-        [AllowAnonymous]
-        public async Task<IActionResult> PostAsync([FromBody] CNUserAuth cNUserAuthBody)
-        {
-            int ResponseStatusCode;
-
-            ResponseStatusCode = await UserCampusNetAuthHTTPRequestAsync(cNUserAuthBody);
-            Console.WriteLine(ResponseStatusCode);
-            
-
-            if (ResponseStatusCode == 401)
-            {
-                return BadRequest(ModelState);
-            }
-
-            return Ok(ResponseStatusCode);
-        }
-
-        protected async Task<int> UserCampusNetAuthHTTPRequestAsync(CNUserAuth cnUserAuth)
+        public static async Task<int> UserCampusNetAuthHTTPRequestAsync(CNUserAuth cnUserAuth)
         {
             string url = @"https://auth.dtu.dk/dtu/mobilapp.jsp";
 
@@ -55,5 +33,26 @@ namespace Freelance_Api.Controllers.APIs.Login
 
             return ResponseStatusCode;
         }
+        
+        public static async Task<HttpResponseMessage> GithubReposHTTPRequestAsync(string userNameFromQuery)
+        {
+            string baseApiURL = "https://api.github.com/users/";
+
+            HttpClient client = new HttpClient();
+            
+            client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent",
+                "Freelance-Portal");
+            
+            string baseApiURLWithParameter = String.Format("https://api.github.com/users/{0}/repos", userNameFromQuery);
+   
+            var response = await client.GetAsync(baseApiURLWithParameter);
+            
+            return response;
+        }
+        
     }
-}
+    
+    
+    
+    
+    }
