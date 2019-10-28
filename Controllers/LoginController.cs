@@ -1,18 +1,17 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Freelance_Api.Models.APIs.Login.CampusNet;
+using Freelance_Api.Models.CampusNet;
 using Freelance_Api.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Freelance_Api.Controllers.APIs.Login
+namespace Freelance_Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     [AllowAnonymous]
-    public class LoginController: ControllerBase
+    public class LoginController : ControllerBase
     {
-       
         [HttpPost("/CampusNet")]
         public async Task<IActionResult> PostAsync([FromBody] CnUserAuth cNUserAuthBody)
         {
@@ -20,7 +19,7 @@ namespace Freelance_Api.Controllers.APIs.Login
 
             responseStatusCode = await HttpService.UserCampusNetAuthHttpRequestAsync(cNUserAuthBody);
             Console.WriteLine(responseStatusCode);
-            
+
 
             if (responseStatusCode == 401)
             {

@@ -1,19 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using Freelance_Api.Models.APIs.Login.CampusNet;
+using Freelance_Api.Extensions;
+using Freelance_Api.Models.CampusNet;
 
 namespace Freelance_Api.Services
+
 {
     public class HttpService
     {
-        public static async Task<int> UserCampusNetAuthHTTPRequestAsync(CNUserAuth cnUserAuth)
+        private static readonly HttpClient Client = new HttpClient();
+        private static readonly string baseApiUrl = "https://cvrapi.dk/api";
+
+        public static async Task<int> UserCampusNetAuthHttpRequestAsync(CnUserAuth cnUserAuth)
         {
             string url = @"https://auth.dtu.dk/dtu/mobilapp.jsp";
 
-            HttpClient client = new HttpClient();
+
             HttpContent content = new FormUrlEncodedContent(new[]
             {
                 new KeyValuePair<string, string>("username", cnUserAuth.AuthUsername),
@@ -24,35 +30,51 @@ namespace Freelance_Api.Services
             content.Headers.Add("X-appname", "DTU Inside Companion");
             content.Headers.Add("X-token", "ae034f83-4bf4-48a9-86c5-a47f03ad6054");
 
-            var response = await client.PostAsync(url, content);
+            var response = await Client.PostAsync(url, content);
 
             var respContent = await response.Content.ReadAsStringAsync();
             Console.WriteLine(respContent);
 
-            var ResponseStatusCode = (int) response.StatusCode;
+            var responseStatusCode = (int) response.StatusCode;
 
-            return ResponseStatusCode;
+            return responseStatusCode;
         }
-        
-        public static async Task<HttpResponseMessage> GithubReposHTTPRequestAsync(string userNameFromQuery)
-        {
-            string baseApiURL = "https://api.github.com/users/";
 
-            HttpClient client = new HttpClient();
-            
-            client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent",
+        public static async Task<HttpResponseMessage> GithubReposHttpRequestAsync(string userNameFromQuery, string repo)
+        {
+            string baseApiUrlWithParameter;
+            Client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent",
                 "Freelance-Portal");
-            
-            string baseApiURLWithParameter = String.Format("https://api.github.com/users/{0}/repos", userNameFromQuery);
-   
-            var response = await client.GetAsync(baseApiURLWithParameter);
-            
+
+            if (repo != null)
+            {
+                baseApiUrlWithParameter = $"https://api.github.com/users/{userNameFromQuery}/{repo}";
+            }
+            else
+            {
+                baseApiUrlWithParameter = $"https://api.github.com/users/{userNameFromQuery}";
+            }
+
+
+            var response = await Client.GetAsync(baseApiUrlWithParameter);
+
             return response;
         }
         
+        public static async Task<HttpResponseMessage> CvrVatHttpRequestAsync(string searchOption, string searchQuery)
+        {
+            Client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent",
+                "[DTU@Gruppe0] [Freelance-portal] - [Ali M] [aamoussa97@gmail.com]");
+
+            var parameters = new Dictionary<string, string>();
+            parameters.Add(searchOption, searchQuery);
+            parameters.Add("country", "DK");
+
+            string baseApiUrlWithParameters = baseApiUrl.AttachParameters(parameters);
+
+            var response = await Client.GetAsync(baseApiUrlWithParameters);
+
+            return response;
+        }
     }
-    
-    
-    
-    
-    }
+}
