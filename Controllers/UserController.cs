@@ -62,7 +62,7 @@ namespace Freelance_Api.Controllers
                 await _signInManager.SignInAsync(user, false);
                 var token = AuthHelperService.GenerateJwtToken(model.Email, user, _configuration);
 
-                var rootData = new LoginResponse(token, user.Firstname, user.Email);
+                var rootData = new LoginResponse(token);
                 return Created("api/v1/authentication/register", rootData);
             }
             var errorMessage = string.Join(", ", ModelState.Values.SelectMany(x => x.Errors).Select(x => x.ErrorMessage));
@@ -82,7 +82,7 @@ namespace Freelance_Api.Controllers
                 var appUser = _userManager.Users.SingleOrDefault(r => r.Email == model.Email);
                 var token = AuthHelperService.GenerateJwtToken(model.Email, appUser, _configuration);
 
-                var rootData = new LoginResponse(token, appUser.UserName, appUser.Email);
+                var rootData = new LoginResponse(token);
                 return Ok(rootData);
             }
             var errorMessage = string.Join(", ", ModelState.Values.SelectMany(x => x.Errors).Select(x => x.ErrorMessage));

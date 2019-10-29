@@ -22,6 +22,8 @@ namespace Freelance_Api.Services
         public Job Get(string id) =>
             _jobs.Find(student => student.Id == id).FirstOrDefault();
 
+        
+        
         public Job Create(Job job)
         {
             job.Id = ObjectId.GenerateNewId().ToString();
