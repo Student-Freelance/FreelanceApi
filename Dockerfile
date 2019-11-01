@@ -1,4 +1,5 @@
 FROM mcr.microsoft.com/dotnet/core/sdk:3.0 AS build
+WORKDIR /app
 ARG ConnectionString 
 ARG DatabaseName 
 ARG JobCollectionName 
@@ -9,7 +10,7 @@ DatabaseName=$DatabaseName \
 JobCollectionName=$JobCollectionName \
 JwtIssuer=$JwtIssuer \
 JwtKey=$JwtKey 
-WORKDIR /app
+WORKDIR /src
 # copy csproj and restore as distinct layers
 COPY *.sln .
 COPY *.csproj .
@@ -17,13 +18,11 @@ RUN dotnet restore
 # copy everything else and build app
 COPY . .
 WORKDIR /app
-ADD $ConnectionString \
-    $DatabaseName \
-    $JobCollectionName \
-    $JwtIssuer \
-    $JwtKey 
+RUN dotnet build -c Release -o /app
+FROM build AS publish
 RUN dotnet publish -c Release -o out 
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.0 AS runtime
+FROM runtime AS final
 WORKDIR /app
-COPY --from=build /app/out ./
-ENTRYPOINT ["dotnet", "Freelance-Api.dll", "--environment=X"]
+COPY --from=publish /app/out .
+ENTRYPOINT ["dotnet", "Freelance-Api.dll"]
