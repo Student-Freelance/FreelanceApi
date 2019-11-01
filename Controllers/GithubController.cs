@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 namespace Freelance_Api.Controllers
 {
-    [Route("api/github/")]
+    [Route("api/[controller]")]
     [AllowAnonymous]
     [ApiController]
     public class GitHubController : ControllerBase
