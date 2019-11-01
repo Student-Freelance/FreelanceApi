@@ -7,6 +7,6 @@ printenv
 # and while executing hooks like here.
 # DOCKER_TAG: the Docker repository tag being built.
 # https://docs.docker.com/docker-hub/builds/advanced/
-docker build -t latest  --build-arg ConnectionString$latest --build-arg DatabaseName$latest --build-arg JobCollectionName$latest --build-arg JwtIssuer$latest --build-arg JwtKey$latest .
+docker build -t $IMAGE_NAME  --build-arg ConnectionString$latest --build-arg DatabaseName$latest --build-arg JobCollectionName$latest --build-arg JwtIssuer$latest --build-arg JwtKey$latest .
 
 echo "------ HOOK END   - BUILD -------"
