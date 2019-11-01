@@ -1,12 +1,12 @@
 #!/bin/bash
 
 echo "------ HOOK START - BUILD -------"
-printenv
 
+printenv
 # ENV VARs are set by the cloud.docker.com build process, and are available during automated builds, automated tests,
 # and while executing hooks like here.
 # DOCKER_TAG: the Docker repository tag being built.
 # https://docs.docker.com/docker-hub/builds/advanced/
-docker build -t $IMAGE_NAME --build-arg ConnectionString=$latest --build-arg DatabaseName$latest --build-arg JobCollectionName$latest --build-arg JwtIssuer$latest --build-arg JwtKey$DOCKER_TAG .
+docker build -t IMAGE_NAME  --build-arg ConnectionString=$DOCKER_TAG --build-arg DatabaseName=$DOCKER_TAG --build-arg JobCollectionName=$DOCKER_TAG --build-arg JwtIssuer=$DOCKER_TAG --build-arg JwtKey=$DOCKER_TAG .
 
 echo "------ HOOK END   - BUILD -------"
