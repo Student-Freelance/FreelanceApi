@@ -44,7 +44,8 @@ namespace Freelance_Api
             services.Configure<DatabaseSettings>(Configuration);
             services.AddSingleton<IDatabaseSettings>(sp =>
                 sp.GetRequiredService<IOptions<DatabaseSettings>>().Value);
-             
+            services.AddSingleton<IJWTsettings>(sp =>
+                sp.GetRequiredService<IOptions<JWTsettings>>().Value);
     
             services.AddIdentityMongoDbProvider<AppUser, AppRole>(identityOptions =>
                 {
