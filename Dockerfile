@@ -10,17 +10,17 @@ DatabaseName=$DatabaseName \
 JobCollectionName=$JobCollectionName \
 JwtIssuer=$JwtIssuer \
 JwtKey=$JwtKey 
-WORKDIR /src
+WORKDIR /app
 # copy csproj and restore as distinct layers
 COPY *.sln .
 COPY *.csproj .
 RUN dotnet restore
 # copy everything else and build app
-COPY . .
 WORKDIR /app
+COPY . .
 RUN dotnet build -c Release -o /app
 FROM build AS publish
-RUN dotnet publish -c Release -o out 
+RUN dotnet publish -c Release -o /app
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.0 AS runtime
 FROM runtime AS final
 WORKDIR /app
