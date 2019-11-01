@@ -83,10 +83,10 @@ namespace Freelance_Api
                 cfg.TokenValidationParameters =
                     new TokenValidationParameters
                     {
-                        ValidIssuer = Configuration["JwtIssuer"],
-                        ValidAudience = Configuration["JwtIssuer"],
+                        ValidIssuer =  Environment.GetEnvironmentVariable("JwtIssuer"),
+                        ValidAudience = Environment.GetEnvironmentVariable("JwtIssuer"),
                         IssuerSigningKey =
-                            new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JwtKey"])),
+                            new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JwtKey"))),
                         ClockSkew = TimeSpan.Zero
                     };
             });

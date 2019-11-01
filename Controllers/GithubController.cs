@@ -13,7 +13,6 @@ namespace Freelance_Api.Controllers
     public class GitHubController : ControllerBase
     {
         [HttpGet("{userNameFromEndPoint}")]
-         
         public async Task<IActionResult> Get(string userNameFromEndPoint, string? repos=null)
         {
             int responseStatusCode;
