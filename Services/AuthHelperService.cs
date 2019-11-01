@@ -13,7 +13,13 @@ namespace Freelance_Api.Services
 {
     public class AuthHelperService
     {
-        public static string GenerateJwtToken(string username, MongoUser user, IJWTsettings configuration)
+        private static IJWTsettings _configuration;
+
+        public AuthHelperService(IJWTsettings configuration)
+        {
+            _configuration = configuration;
+        }
+        public static string GenerateJwtToken(string username, MongoUser user)
         {
             var claims = new List<Claim>
             {
@@ -22,13 +28,13 @@ namespace Freelance_Api.Services
                 new Claim(ClaimTypes.NameIdentifier, user.Id)
             };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtKey"]));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.JwtKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var expires = DateTime.Now.AddMinutes(15);
 
             var token = new JwtSecurityToken(
-                configuration.JwtIssuer,
-                configuration.JwtKey,
+                _configuration.JwtIssuer,
+                _configuration.JwtIssuer,
                 claims,
                 expires: expires,
                 signingCredentials: creds
