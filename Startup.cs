@@ -146,8 +146,7 @@ namespace Freelance_Api
                 app.UseDeveloperExceptionPage();
                 app.UseHttpsRedirection();
             }
-
-        
+            
             app.UseAuthentication();
             app.UseRouting();
 

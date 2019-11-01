@@ -4,11 +4,6 @@ ARG DatabaseName
 ARG JobCollectionName 
 ARG JwtIssuer
 ARG JwtKey
-ENV ConnectionString=$ConnectionString \
-DatabaseName=$DatabaseName \
-JobCollectionName=$JobCollectionName \
-JwtIssuer=$JwtIssuer \
-JwtKey=$JwtKey 
 WORKDIR /app
 # copy csproj and restore as distinct layers
 COPY *.sln .
@@ -17,9 +12,13 @@ RUN dotnet restore
 # copy everything else and build app
 COPY . .
 WORKDIR /app
+ENV ConnectionString=$ConnectionString \
+DatabaseName=$DatabaseName \
+JobCollectionName=$JobCollectionName \
+JwtIssuer=$JwtIssuer \
+JwtKey=$JwtKey 
 RUN dotnet publish -c Release -o out 
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.0 AS runtime
 WORKDIR /app
-RUN env
 COPY --from=build /app/out ./
-ENTRYPOINT ["dotnet", "Freelance-Api.dll", "--environment=X"] 
+ENTRYPOINT ["dotnet", "Freelance-Api.dll"] 
