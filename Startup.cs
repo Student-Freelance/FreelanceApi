@@ -4,6 +4,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Cryptography;
 using System.Text;
 using AspNetCore.Identity.Mongo;
+using Freelance_Api.Extensions;
 using Freelance_Api.Models;
 using Freelance_Api.Models.Identity;
 using Freelance_Api.Services;
@@ -43,6 +44,7 @@ namespace Freelance_Api
             services.Configure<DatabaseSettings>(Configuration);
             services.AddSingleton<IDatabaseSettings>(sp =>
                 sp.GetRequiredService<IOptions<DatabaseSettings>>().Value);
+             
     
             services.AddIdentityMongoDbProvider<AppUser, AppRole>(identityOptions =>
                 {
@@ -53,16 +55,16 @@ namespace Freelance_Api
                     identityOptions.Password.RequireDigit = true;
                     identityOptions.Lockout.MaxFailedAccessAttempts = 3;
                     identityOptions.User.RequireUniqueEmail = true;
+                 
                 },
                 mongoIdentityOptions =>
                 {
                     mongoIdentityOptions.ConnectionString = Environment.GetEnvironmentVariable("ConnectionString");
                 });
+    
 
-            
 
-
-                // JWT setup in the followin
+            // JWT setup in the followin
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             services.AddAuthentication(options =>
             {
@@ -126,6 +128,7 @@ namespace Freelance_Api
                 .AddNewtonsoftJson();
             services.AddSingleton<HttpService>();
             services.AddSingleton<JobService>();
+            services.AddSingleton<UserService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

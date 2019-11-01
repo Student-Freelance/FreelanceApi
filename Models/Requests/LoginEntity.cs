@@ -1,12 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using MongoDB.Driver.Core.Authentication;
 
 namespace Freelance_Api.Models.Requests
 {
     public class LoginEntity
     {
         [Required]
-        [EmailAddress]
-        public string Email { get; set; }
+        public string UserName { get; set; }
 
         [Required]
         [DataType(DataType.Password)]

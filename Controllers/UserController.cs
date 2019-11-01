@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
+using Freelance_Api.Models;
 using Freelance_Api.Models.Identity;
 using Freelance_Api.Models.Requests;
 using Freelance_Api.Models.Responses;
@@ -13,80 +13,96 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 
 namespace Freelance_Api.Controllers
-{
+{   
     [Route("api/[controller]/[action]")]
-    [ApiController]
-    // [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class UserController : ControllerBase
     {
-        private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
+        private readonly UserManager<AppUser> _userManager;
         private readonly IConfiguration _configuration;
 
-        public UserController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager,
-            IConfiguration configuration)
+        public UserController(SignInManager<AppUser> signInManager, UserManager<AppUser> userManager, IConfiguration configuration)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _configuration = configuration;
         }
 
-
-         // GET api/user/userdata
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        [HttpGet]
-        public async Task<ActionResult> UserData()
-        {
-            var user = await _userManager.GetUserAsync(User);
-            var userData = new AppUser()
-            {
-                Firstname = user.Firstname,
-                Lastname = user.Lastname,
-                Location = user.Location,
-                Email = user.Email
-            };
-            return Ok(userData);
-        }
-        
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IActionResult> Register([FromBody]RegisterEntity model)
+        public async Task<IActionResult> RegisterCompany([FromBody] RegisterCompany model)
         {
             if (ModelState.IsValid)
             {
-                var user = new AppUser { Firstname = model.FirstName, Lastname = model.LastName, Location = model.Location, UserName = model.Email, Email = model.Email, CreatedOn  = DateTime.Now };
+                var user = new Company
+                    {UserName = model.CompanyName, Email = model.Email, CreatedOn = DateTime.Now, ModifiedOn = DateTime.Now};
                 var result = await _userManager.CreateAsync(user, model.Password);
+                
                 if (!result.Succeeded)
                     return Ok(string.Join(",",
                         result.Errors?.Select(error => error.Description) ?? throw new InvalidOperationException()));
                 await _signInManager.SignInAsync(user, false);
-                var token = AuthHelperService.GenerateJwtToken(model.Email, user, _configuration);
+                var token = AuthHelperService.GenerateJwtToken(model.Email, user,_configuration);
 
                 var rootData = new LoginResponse(token);
                 return Created("api/v1/authentication/register", rootData);
             }
-            var errorMessage = string.Join(", ", ModelState.Values.SelectMany(x => x.Errors).Select(x => x.ErrorMessage));
+
+            var errorMessage =
+                string.Join(", ", ModelState.Values.SelectMany(x => x.Errors).Select(x => x.ErrorMessage));
             return BadRequest(errorMessage);
         }
-
-     
-        // POST api/user/login
+        
         [HttpPost]
         [AllowAnonymous]
-        public async Task<ActionResult> Login([FromBody]LoginEntity model)
+        public async Task<IActionResult> RegisterStudent([FromBody] RegisterStudent model)
         {
             if (ModelState.IsValid)
             {
-                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, false);
-                if (!result.Succeeded) return StatusCode((int) HttpStatusCode.Unauthorized, "Bad Credentials");
-                var appUser = _userManager.Users.SingleOrDefault(r => r.Email == model.Email);
-                var token = AuthHelperService.GenerateJwtToken(model.Email, appUser, _configuration);
-
+                var user = new Student
+                {
+                    Firstname = model.FirstName, Lastname = model.LastName, UserName = model.UserName,
+                    Email = model.Email,
+                    CreatedOn = DateTime.Now, ModifiedOn = DateTime.Now
+                };
+                var result = await _userManager.CreateAsync(user, model.Password);
+                
+                if (!result.Succeeded)
+                    return Ok(string.Join(",",
+                        result.Errors?.Select(error => error.Description) ?? throw new InvalidOperationException()));
+                await _signInManager.SignInAsync(user, false);
+                var token = AuthHelperService.GenerateJwtToken(model.Email, user,_configuration);
                 var rootData = new LoginResponse(token);
-                return Ok(rootData);
+                return Created("api/v1/authentication/register", rootData);
             }
-            var errorMessage = string.Join(", ", ModelState.Values.SelectMany(x => x.Errors).Select(x => x.ErrorMessage));
-            return BadRequest(errorMessage ?? "Bad Request");
+
+            var errorMessage =
+                string.Join(", ", ModelState.Values.SelectMany(x => x.Errors).Select(x => x.ErrorMessage));
+            return BadRequest(errorMessage);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> GetUserData()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            return Ok(user);
+        }
+        
+        [HttpPost]
+        public async Task<ActionResult> UpdateStudent([FromBody] Student model)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (!ModelState.IsValid || user == null) return Ok(user);
+            user = model;
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+                return Ok(string.Join(",",
+                    result.Errors?.Select(error => error.Description) ?? throw new InvalidOperationException()));
+            var errorMessage =
+                string.Join(", ", ModelState.Values.SelectMany(x => x.Errors).Select(x => x.ErrorMessage));
+            return BadRequest(errorMessage);
+
         }
     }
 }
