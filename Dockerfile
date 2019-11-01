@@ -17,9 +17,13 @@ RUN dotnet restore
 # copy everything else and build app
 COPY . .
 WORKDIR /app
-RUN env
-RUN dotnet publish -c Release -o out
+ADD $ConnectionString \
+    $DatabaseName \
+    $JobCollectionName \
+    $JwtIssuer \
+    $JwtKey 
+RUN dotnet publish -c Release -o out 
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.0 AS runtime
 WORKDIR /app
 COPY --from=build /app/out ./
-ENTRYPOINT ["dotnet", "Freelance-Api.dll"]
+ENTRYPOINT ["dotnet", "Freelance-Api.dll", "--environment=X"]
