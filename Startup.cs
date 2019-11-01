@@ -143,9 +143,10 @@ namespace Freelance_Api
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseHttpsRedirection();
             }
 
-            app.UseHttpsRedirection();
+        
             app.UseAuthentication();
             app.UseRouting();
 
