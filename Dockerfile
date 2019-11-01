@@ -4,6 +4,16 @@ WORKDIR /app
 COPY *.sln .
 COPY *.csproj .
 RUN dotnet restore
+ARG ConnectionString 
+ENV ConnectionString =$ConnectionString 
+ARG DatabaseName 
+ENV DatabaseName =$DatabaseName 
+ARG JobCollectionName 
+ENV JobCollectionName =$JobCollectionName 
+ARG JwtIssuer
+ENV JwtIssuer =$JwtIssuer 
+ARG JwtKey
+ENV JwtKey =$JwtKey 
 # copy everything else and build app
 COPY . .
 WORKDIR /app

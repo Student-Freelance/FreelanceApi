@@ -9,7 +9,7 @@ namespace Freelance_Api.Controllers
     [Route("api/github/")]
     [AllowAnonymous]
     [ApiController]
-    public class GithubController : ControllerBase
+    public class GitHubController : ControllerBase
     {
         [HttpGet("{userNameFromEndPoint}")]
         public async Task<IActionResult> Get(string userNameFromEndPoint, string? repos=null)
