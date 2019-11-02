@@ -33,7 +33,7 @@ namespace Freelance_Api
         public Startup(IWebHostEnvironment env, IConfiguration configuration)
         {
           
-            var conf = new ConfigurationBuilder().SetBasePath(env.ContentRootPath).AddConfiguration(configuration).AddEnvironmentVariables().Build();
+            var conf = new ConfigurationBuilder().AddConfiguration(configuration).AddEnvironmentVariables().Build();
             Configuration = conf;
         }
 
