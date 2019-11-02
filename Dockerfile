@@ -14,7 +14,6 @@ WORKDIR /app
 COPY *.sln .
 COPY *.csproj .
 RUN printenv
-RUN dotnet restore
 # copy everything else and build app
 COPY . .
 WORKDIR /app
