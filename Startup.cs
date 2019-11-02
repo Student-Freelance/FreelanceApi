@@ -48,7 +48,8 @@ namespace Freelance_Api
                 options.AddPolicy(MyAllowSpecificOrigins,
                     builder =>
                     {
-                        builder.WithOrigins("https://freelance-portal.herokuapp.com/");
+                        builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+                        //  builder.WithOrigins("https://freelance-portal.herokuapp.com/");
                     });
             });
             
