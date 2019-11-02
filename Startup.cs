@@ -30,8 +30,9 @@ namespace Freelance_Api
     public class Startup
     {
         public Startup(IConfiguration configuration)
-        {    
-            var conf = new ConfigurationBuilder().AddConfiguration(configuration).AddEnvironmentVariables().Build();
+        {
+           
+            var conf = new ConfigurationBuilder().SetBasePath(Environment.CurrentDirectory).AddConfiguration(configuration).AddEnvironmentVariables().Build();
             Configuration = conf;
         }
 
@@ -40,7 +41,7 @@ namespace Freelance_Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
 
-        {
+        { 
             services.Configure<DatabaseSettings>(Configuration);
             services.AddSingleton<IDatabaseSettings>(sp =>
                 sp.GetRequiredService<IOptions<DatabaseSettings>>().Value);
