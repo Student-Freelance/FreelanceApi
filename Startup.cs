@@ -30,19 +30,29 @@ namespace Freelance_Api
 {
     public class Startup
     {
-        public Startup(IWebHostEnvironment env, IConfiguration configuration)
+        public Startup(IConfiguration configuration)
         {
           
             var conf = new ConfigurationBuilder().AddConfiguration(configuration).AddEnvironmentVariables().Build();
             Configuration = conf;
         }
-
+        readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
 
         { 
+            services.AddCors(options =>
+            {
+                options.AddPolicy(MyAllowSpecificOrigins,
+                    builder =>
+                    {
+                        builder.WithOrigins("https://freelance-portal.herokuapp.com/");
+                    });
+            });
+            
+            
             services.Configure<DatabaseSettings>(Configuration);
             services.AddSingleton<IDatabaseSettings>(sp =>
                 sp.GetRequiredService<IOptions<DatabaseSettings>>().Value);
@@ -151,7 +161,7 @@ namespace Freelance_Api
             
             app.UseAuthentication();
             app.UseRouting();
-
+            app.UseCors(MyAllowSpecificOrigins);
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
