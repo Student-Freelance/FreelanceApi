@@ -8,6 +8,7 @@ using Freelance_Api.Extensions;
 using Freelance_Api.Models;
 using Freelance_Api.Models.Identity;
 using Freelance_Api.Services;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
@@ -29,10 +30,10 @@ namespace Freelance_Api
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IWebHostEnvironment env, IConfiguration configuration)
         {
-           
-            var conf = new ConfigurationBuilder().SetBasePath(Environment.CurrentDirectory).AddConfiguration(configuration).AddEnvironmentVariables().Build();
+          
+            var conf = new ConfigurationBuilder().SetBasePath(env.ContentRootPath).AddConfiguration(configuration).AddEnvironmentVariables().Build();
             Configuration = conf;
         }
 
