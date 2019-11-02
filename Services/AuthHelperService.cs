@@ -7,6 +7,7 @@ using AspNetCore.Identity.Mongo.Model;
 using Freelance_Api.Models;
 using Freelance_Api.Models.Identity;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Freelance_Api.Services
@@ -15,9 +16,9 @@ namespace Freelance_Api.Services
     {
         private static IJWTsettings _configuration;
 
-        public AuthHelperService(IJWTsettings configuration)
+        public AuthHelperService(IOptions<JWTsettings> configuration)
         {
-            _configuration = configuration;
+            _configuration = configuration.Value;
         }
         public static string GenerateJwtToken(string username, MongoUser user)
         {

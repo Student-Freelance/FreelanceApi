@@ -11,15 +11,11 @@ ARG JwtKey
 ENV JwtKey=${JwtKey} 
 WORKDIR /app
 # copy csproj and restore as distinct layers
-COPY *.sln .
 COPY *.csproj .
-RUN printenv
 RUN dotnet restore
 # copy everything else and build app
 COPY . .
-WORKDIR /app
-RUN printenv
-RUN dotnet publish -c Release -o /app/out 
+RUN dotnet publish -c Release -o out 
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.0 AS runtime
 WORKDIR /app
 COPY --from=build /app/out .
