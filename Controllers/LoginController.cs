@@ -21,12 +21,14 @@ namespace Freelance_Api.Controllers
     {
         private readonly SignInManager<AppUser> _signInManager;
         private readonly UserManager<AppUser> _userManager;
-     
+        private IConfiguration _configuration;
 
-        public LoginController(SignInManager<AppUser> signInManager, UserManager<AppUser> userManager)
+
+        public LoginController(SignInManager<AppUser> signInManager, UserManager<AppUser> userManager,  IConfiguration configuration)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _configuration = configuration;
         }
 
 
@@ -38,7 +40,7 @@ namespace Freelance_Api.Controllers
                 var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, false, false);
                 if (!result.Succeeded) return StatusCode((int) HttpStatusCode.Unauthorized, "Bad Credentials");
                 var appUser = _userManager.Users.SingleOrDefault(r => r.UserName == model.UserName);
-                var token = AuthHelperService.GenerateJwtToken(model.UserName, appUser);
+                var token = AuthHelperService.GenerateJwtToken(model.UserName, appUser, _configuration);
                 var rootData = new LoginResponse(token);
                 return Ok(rootData);
             }

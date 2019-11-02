@@ -1,30 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Cryptography;
 using System.Text;
 using AspNetCore.Identity.Mongo;
-using Freelance_Api.Extensions;
 using Freelance_Api.Models;
 using Freelance_Api.Models.Identity;
 using Freelance_Api.Services;
-using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
-using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using MongoDB.Driver;
-using MongoDB.Driver.Core.Configuration;
-using EncryptionAlgorithm = MongoDB.Libmongocrypt.EncryptionAlgorithm;
 
 namespace Freelance_Api
 {
@@ -32,17 +22,17 @@ namespace Freelance_Api
     {
         public Startup(IConfiguration configuration)
         {
-          
             var conf = new ConfigurationBuilder().AddConfiguration(configuration).AddEnvironmentVariables().Build();
             Configuration = conf;
         }
+
         readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
 
-        { 
+        {
             services.AddCors(options =>
             {
                 options.AddPolicy(MyAllowSpecificOrigins,
@@ -52,14 +42,12 @@ namespace Freelance_Api
                         //  builder.WithOrigins("https://freelance-portal.herokuapp.com/");
                     });
             });
-            
-            
+
+
             services.Configure<DatabaseSettings>(Configuration);
             services.AddSingleton<IDatabaseSettings>(sp =>
                 sp.GetRequiredService<IOptions<DatabaseSettings>>().Value);
-            services.AddSingleton<IJWTsettings>(sp =>
-                sp.GetRequiredService<IOptions<JWTsettings>>().Value);
-    
+
             services.AddIdentityMongoDbProvider<AppUser, AppRole>(identityOptions =>
                 {
                     identityOptions.Password.RequiredLength = 8;
@@ -69,13 +57,11 @@ namespace Freelance_Api
                     identityOptions.Password.RequireDigit = true;
                     identityOptions.Lockout.MaxFailedAccessAttempts = 3;
                     identityOptions.User.RequireUniqueEmail = true;
-                 
                 },
                 mongoIdentityOptions =>
                 {
                     mongoIdentityOptions.ConnectionString = Environment.GetEnvironmentVariable("ConnectionString");
                 });
-    
 
 
             // JWT setup in the followin
@@ -96,14 +82,15 @@ namespace Freelance_Api
                 cfg.TokenValidationParameters =
                     new TokenValidationParameters
                     {
-                        ValidIssuer =  Environment.GetEnvironmentVariable("JwtIssuer"),
+                        ValidIssuer = Environment.GetEnvironmentVariable("JwtIssuer"),
                         ValidAudience = Environment.GetEnvironmentVariable("JwtIssuer"),
                         IssuerSigningKey =
-                            new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JwtKey"))),
+                            new SymmetricSecurityKey(
+                                Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JwtKey"))),
                         ClockSkew = TimeSpan.Zero
                     };
             });
-            
+
             //Swagger setup 
             services.AddSwaggerGen(c =>
             {
@@ -159,7 +146,7 @@ namespace Freelance_Api
                 app.UseDeveloperExceptionPage();
                 app.UseHttpsRedirection();
             }
-            
+
             app.UseAuthentication();
             app.UseRouting();
             app.UseCors(MyAllowSpecificOrigins);

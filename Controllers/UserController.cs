@@ -20,11 +20,13 @@ namespace Freelance_Api.Controllers
     {
         private readonly SignInManager<AppUser> _signInManager;
         private readonly UserManager<AppUser> _userManager;
+        private readonly IConfiguration _configuration;
 
-        public UserController(SignInManager<AppUser> signInManager, UserManager<AppUser> userManager)
+        public UserController(SignInManager<AppUser> signInManager, UserManager<AppUser> userManager, IConfiguration configuration)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _configuration = configuration;
         }
 
         [HttpPost]
@@ -36,15 +38,17 @@ namespace Freelance_Api.Controllers
                 var user = new Company
                     {UserName = model.CompanyName, Email = model.Email, CreatedOn = DateTime.Now, ModifiedOn = DateTime.Now};
                 var result = await _userManager.CreateAsync(user, model.Password);
-                
-                if (!result.Succeeded)
-                    return Ok(string.Join(",",
-                        result.Errors?.Select(error => error.Description) ?? throw new InvalidOperationException()));
-                await _signInManager.SignInAsync(user, false);
-                var token = AuthHelperService.GenerateJwtToken(model.Email, user);
 
+                if (!result.Succeeded)
+                {
+                    return BadRequest(string.Join(",",
+                        result.Errors?.Select(error => error.Description) ?? throw new InvalidOperationException()));
+                }
+                 
+                await _signInManager.SignInAsync(user, false);
+                var token = AuthHelperService.GenerateJwtToken(model.Email, user, _configuration);
                 var rootData = new LoginResponse(token);
-                return Created("api/v1/authentication/register", rootData);
+                return Ok(rootData);
             }
 
             var errorMessage =
@@ -65,14 +69,17 @@ namespace Freelance_Api.Controllers
                     CreatedOn = DateTime.Now, ModifiedOn = DateTime.Now
                 };
                 var result = await _userManager.CreateAsync(user, model.Password);
-                
+
                 if (!result.Succeeded)
-                    return Ok(string.Join(",",
+                {
+                    return BadRequest(string.Join(",",
                         result.Errors?.Select(error => error.Description) ?? throw new InvalidOperationException()));
+
+                }
                 await _signInManager.SignInAsync(user, false);
-                var token = AuthHelperService.GenerateJwtToken(model.Email, user);
+                var token = AuthHelperService.GenerateJwtToken(model.Email, user, _configuration );
                 var rootData = new LoginResponse(token);
-                return Created("api/v1/authentication/register", rootData);
+                return Ok(rootData);
             }
 
             var errorMessage =
