@@ -2,7 +2,7 @@
 
 namespace Freelance_Api.Models.Requests
 {
-    public class RegisterStudent
+    public class RegisterStudentModel
     {
         [Required]
         [EmailAddress]

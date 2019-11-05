@@ -1,25 +1,13 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Runtime;
 
 namespace Freelance_Api.Models.Responses
 {
-    public class StudentDataResponse
+    public class PublicStudentDataModel
     {
-        public StudentDataResponse(Student student)
+        public PublicStudentDataModel()
         {
-            Firstname = student.Firstname;
-            Lastname = student.Lastname;
-            University = student.University;
-            Semester = student.Semester;
-            Ranking = student.Ranking;
-            Username = student.UserName;
-            Education = student.Education;
-            Tags = student.Tags;
-            Email = student.Email;
-            Website = student.Email;
-            Avatar = student.Logo;
-            Availability = student.Availability;
-
 
         }
         public string Firstname { get; set; }
@@ -28,6 +16,8 @@ namespace Freelance_Api.Models.Responses
         public int Semester { get; set; }
         public string Ranking { get; set; }
         public string Username { get; set; }
+        [EmailAddress]
+        [Display(Name = "Email")]
         public string Email { get; set; }
         public string[] Tags { get; set; }
         public string Website { get; set; }

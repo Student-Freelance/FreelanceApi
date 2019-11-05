@@ -15,15 +15,15 @@ namespace Freelance_Api.Services
         private static readonly HttpClient Client = new HttpClient();
         private static readonly string baseApiUrl = "https://cvrapi.dk/api";
 
-        public static async Task<int> UserCampusNetAuthHttpRequestAsync(CnUserAuth cnUserAuth)
+        public static async Task<int> UserCampusNetAuthHttpRequestAsync(CnUserAuthModel cnUserAuthModel)
         {
             string url = @"https://auth.dtu.dk/dtu/mobilapp.jsp";
 
 
             HttpContent content = new FormUrlEncodedContent(new[]
             {
-                new KeyValuePair<string, string>("username", cnUserAuth.AuthUsername),
-                new KeyValuePair<string, string>("password", cnUserAuth.AuthPassword),
+                new KeyValuePair<string, string>("username", cnUserAuthModel.AuthUsername),
+                new KeyValuePair<string, string>("password", cnUserAuthModel.AuthPassword),
             });
 
             content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
@@ -42,18 +42,10 @@ namespace Freelance_Api.Services
 
         public static async Task<HttpResponseMessage> GithubReposHttpRequestAsync(string userNameFromQuery, string repo)
         {
-            string baseApiUrlWithParameter;
             Client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent",
                 "Freelance-Portal");
 
-            if (repo != null)
-            {
-                baseApiUrlWithParameter = $"https://api.github.com/users/{userNameFromQuery}/{repo}";
-            }
-            else
-            {
-                baseApiUrlWithParameter = $"https://api.github.com/users/{userNameFromQuery}";
-            }
+            var baseApiUrlWithParameter = repo != null ? $"https://api.github.com/users/{userNameFromQuery}/{repo}" : $"https://api.github.com/users/{userNameFromQuery}";
 
 
             var response = await Client.GetAsync(baseApiUrlWithParameter);

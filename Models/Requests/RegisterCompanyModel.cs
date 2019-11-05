@@ -2,7 +2,7 @@
 
 namespace Freelance_Api.Models.Requests
 {
-    public class RegisterCompany
+    public class RegisterCompanyModel
     {
         [Required]
             [EmailAddress]
@@ -23,6 +23,10 @@ namespace Freelance_Api.Models.Requests
             [Required]
             [Display(Name = "CompanyName")]
             public string CompanyName { get; set; }
+            
+            [Required]
+            [Display(Name = "UserName")]
+            public string UserName { get; set; }
             
         
         }

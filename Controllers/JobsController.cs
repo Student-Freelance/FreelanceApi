@@ -7,21 +7,21 @@ namespace Freelance_Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class JobController: ControllerBase
+    public class JobsController: ControllerBase
     {
         private readonly JobService _jobService;
 
-        public JobController(JobService jobService)
+        public JobsController(JobService jobService)
         {
             _jobService = jobService;
         }
 
         [HttpGet]
-        public ActionResult<List<Job>> Get() =>
+        public ActionResult<List<JobModel>> Get() =>
             _jobService.Get();
 
         [HttpGet("{id:length(24)}")]
-        public ActionResult<Job> Get(string id)
+        public ActionResult<JobModel> Get(string id)
         {
             var job = _jobService.Get(id);
 
@@ -34,15 +34,15 @@ namespace Freelance_Api.Controllers
         }
 
         [HttpPost]
-        public ActionResult<Job> Create(Job job)
+        public ActionResult<JobModel> Create(JobModel jobModel)
         {
-            _jobService.Create(job);
+            _jobService.Create(jobModel);
 
-            return job;
+            return jobModel;
         }
 
         [HttpPut("{id:length(24)}")]
-        public IActionResult Update(string id, Job jobin)
+        public IActionResult Update(string id, JobModel jobin)
         {
             var job = _jobService.Get(id);
 

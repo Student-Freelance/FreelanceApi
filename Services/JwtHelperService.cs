@@ -4,17 +4,14 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using AspNetCore.Identity.Mongo.Model;
-using Freelance_Api.Models;
-using Freelance_Api.Models.Identity;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Freelance_Api.Services
 {
-    public class AuthHelperService
+    public class JwtHelperService
     {
-        public static string GenerateJwtToken(string username, MongoUser user, IConfiguration _configuration)
+        public static string GenerateJwtToken(string username, MongoUser user, IConfiguration configuration)
         {
             var claims = new List<Claim>
             {
@@ -23,13 +20,13 @@ namespace Freelance_Api.Services
                 new Claim(ClaimTypes.NameIdentifier, user.Id)
             };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtKey"]));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtKey"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var expires = DateTime.Now.AddMinutes(15);
 
             var token = new JwtSecurityToken(
-                _configuration["JwtIssuer"],
-                _configuration["JwtIssuer"],
+                configuration["JwtIssuer"],
+                configuration["JwtIssuer"],
                 claims,
                 expires: expires,
                 signingCredentials: creds

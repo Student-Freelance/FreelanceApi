@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Freelance_Api.DatabaseContext;
 using Freelance_Api.Models;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -7,37 +8,35 @@ namespace Freelance_Api.Services
 {
     public class JobService 
     {
-        private readonly IMongoCollection<Job> _jobs;
+        private readonly IMongoDbContext _context;
 
-        public JobService(IDatabaseSettings settings)
+        public JobService(IMongoDbContext context)
         {
-            var client = new MongoClient(settings.ConnectionString);
-            var database = client.GetDatabase(settings.DatabaseName);
-            _jobs = database.GetCollection<Job>(settings.JobCollectionName);
+            _context = context;
         }
 
-        public List<Job> Get() =>
-            _jobs.Find(job => true).ToList();
+        public List<JobModel> Get() =>
+            _context.Jobs.Find(job => true).ToList();
 
-        public Job Get(string id) =>
-            _jobs.Find(student => student.Id == id).FirstOrDefault();
+        public JobModel Get(string id) =>
+            _context.Jobs.Find(student => student.Id == id).FirstOrDefault();
 
         
         
-        public Job Create(Job job)
+        public JobModel Create(JobModel jobModel)
         {
-            job.Id = ObjectId.GenerateNewId().ToString();
-            _jobs.InsertOne(job);
-            return job;
+            jobModel.Id = ObjectId.GenerateNewId().ToString();
+            _context.Jobs.InsertOne(jobModel);
+            return jobModel;
         }
 
-        public void Update(string id, Job jobin) =>
-            _jobs.ReplaceOne(job => job.Id == id, jobin);
+        public void Update(string id, JobModel jobin) =>
+            _context.Jobs.ReplaceOne(job => job.Id == id, jobin);
 
-        public void Remove(Job jobin) =>
-            _jobs.DeleteOne(job => job.Id == jobin.Id);
+        public void Remove(JobModel jobin) =>
+            _context.Jobs.DeleteOne(job => job.Id == jobin.Id);
 
         public void Remove(string id) =>
-            _jobs.DeleteOne(job => job.Id == id);
+            _context.Jobs.DeleteOne(job => job.Id == id);
     }
 }

@@ -3,7 +3,7 @@ using Freelance_Api.Models.Identity;
 
 namespace Freelance_Api.Models
 {
-    public class Student : AppUser
+    public class StudentModel : AppUserModel
     {
         public DateTime Birthday { get; set; }
         public string[] Tags { get; set; }

@@ -3,9 +3,9 @@ using AspNetCore.Identity.Mongo.Model;
 
 namespace Freelance_Api.Models.Identity
 {
-    public class AppUser: MongoUser
+    public class AppUserModel: MongoUser
     {
-        public Location Location { get; set; }
+        public LocationModel LocationModel { get; set; }
         public string Website { get; set; }
         
         public string Logo { get; set; }

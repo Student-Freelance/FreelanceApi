@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using AspNetCore.Identity.Mongo;
+using AutoMapper;
+using Freelance_Api.DatabaseContext;
+using Freelance_Api.Helpers;
 using Freelance_Api.Models;
 using Freelance_Api.Models.Identity;
 using Freelance_Api.Services;
@@ -12,9 +15,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using MongoDB.Bson.Serialization;
 
 namespace Freelance_Api
 {
@@ -26,7 +29,7 @@ namespace Freelance_Api
             Configuration = conf;
         }
 
-        readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+        private const string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -44,11 +47,11 @@ namespace Freelance_Api
             });
 
 
-            services.Configure<DatabaseSettings>(Configuration);
-            services.AddSingleton<IDatabaseSettings>(sp =>
-                sp.GetRequiredService<IOptions<DatabaseSettings>>().Value);
-
-            services.AddIdentityMongoDbProvider<AppUser, AppRole>(identityOptions =>
+            var dbcontext = new MongoDbContext(Environment.GetEnvironmentVariable("ConnectionString"),
+                Environment.GetEnvironmentVariable("DatabaseName"),
+                Environment.GetEnvironmentVariable("JobCollectionName"));
+            services.AddSingleton<IMongoDbContext>(dbcontext);
+            services.AddIdentityMongoDbProvider<AppUserModel, AppRoleModel>(identityOptions =>
                 {
                     identityOptions.Password.RequiredLength = 8;
                     identityOptions.Password.RequireLowercase = true;
@@ -124,12 +127,17 @@ namespace Freelance_Api
 
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "Freelance API", Version = "v1"});
             });
+            var mappingConfig = new MapperConfiguration(mc => { mc.AddProfile(new MappingProfile()); });
 
+            var mapper = mappingConfig.CreateMapper();
+            services.AddSingleton(mapper);
             services.AddControllers()
                 .AddNewtonsoftJson();
+
             services.AddSingleton<HttpService>();
             services.AddSingleton<JobService>();
-            services.AddSingleton<UserService>();
+            services.AddSingleton<StudentService>();
+            services.AddSingleton<CompanyService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -147,9 +155,10 @@ namespace Freelance_Api
                 app.UseHttpsRedirection();
             }
 
-            app.UseAuthentication();
+
             app.UseRouting();
             app.UseCors(MyAllowSpecificOrigins);
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });

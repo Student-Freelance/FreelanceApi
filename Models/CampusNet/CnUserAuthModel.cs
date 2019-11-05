@@ -2,9 +2,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Freelance_Api.Models.CampusNet
 {
-    public struct CnUserAuth
+    public struct CnUserAuthModel
     {
-        public CnUserAuth(string mAuthUsername, string mAuthPassword)
+        public CnUserAuthModel(string mAuthUsername, string mAuthPassword)
         {
             this.AuthUsername = mAuthUsername;
             this.AuthPassword = mAuthPassword;

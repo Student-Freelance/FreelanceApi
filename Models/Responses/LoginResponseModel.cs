@@ -1,8 +1,8 @@
 ﻿namespace Freelance_Api.Models.Responses
 {
-    public struct LoginResponse
+    public struct LoginResponseModel
     {
-        public LoginResponse(string token)
+        public LoginResponseModel(string token)
         {
             Token = token;
         }

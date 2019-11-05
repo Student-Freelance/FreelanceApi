@@ -3,7 +3,7 @@ using MongoDB.Driver.Core.Authentication;
 
 namespace Freelance_Api.Models.Requests
 {
-    public class LoginEntity
+    public class LoginModel
     {
         [Required]
         public string UserName { get; set; }
