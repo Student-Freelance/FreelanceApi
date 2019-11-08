@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Freelance_Api.DatabaseContext;
+using Freelance_Api.Extensions;
 using Freelance_Api.Models;
 using Freelance_Api.Models.Identity;
 using Freelance_Api.Models.Responses;
@@ -36,10 +37,11 @@ namespace Freelance_Api.Services
 
         public async Task<List<PublicStudentDataModel>>GetStudentsByTag(string tag)
         {
-            var filter = _builder.Eq("_t", "StudentModel") & _builder.All("Tags", new[] {tag, "tests"});
-            var users = await _context.Students.Find(filter).ToListAsync();
-            var model = _mapper.Map<List<PublicStudentDataModel>>(users);
+
+            var result = _context.Students.AsQueryable().WhereText(tag).ToList();
+            var model = _mapper.Map<List<PublicStudentDataModel>>(result);
             return model;
         }
+        
     }
 }

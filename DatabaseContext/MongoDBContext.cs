@@ -1,5 +1,7 @@
-﻿using Freelance_Api.Models;
+﻿using System.Threading;
+using Freelance_Api.Models;
 using Freelance_Api.Models.Identity;
+using Maddalena.Mongo;
 using MongoDB.Driver;
 
 namespace Freelance_Api.DatabaseContext
@@ -11,6 +13,9 @@ namespace Freelance_Api.DatabaseContext
             Client = new MongoClient(connectionstring);
             DatabaseBase = Client.GetDatabase(databasename);
             Students = DatabaseBase.GetCollection<StudentModel>("Users");
+            var builder = Builders<StudentModel>.IndexKeys;
+            var indexModel = new CreateIndexModel<StudentModel>(builder.Ascending(x => x.Tags));
+            Students.Indexes.CreateOne(indexModel);
             Companies = DatabaseBase.GetCollection<CompanyModel>("Users");
             Jobs = DatabaseBase.GetCollection<JobModel>(jobcollection);
         }

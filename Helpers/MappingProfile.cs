@@ -1,11 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Freelance_Api.Models;
 using Freelance_Api.Models.Identity;
 using Freelance_Api.Models.Responses;
-using Microsoft.AspNetCore.Mvc;
+using MongoDB.Driver.Linq;
 
 namespace Freelance_Api.Helpers
 {
@@ -19,8 +16,7 @@ namespace Freelance_Api.Helpers
             CreateMap<StudentModel, PublicStudentDataModel>().ReverseMap();
             CreateMap<CompanyModel, PrivateCompanyDataModel>().ReverseMap();
             CreateMap<CompanyModel, PublicCompanyDataModel>().ReverseMap();
-           
-         
+            CreateMap<IMongoQueryable<StudentModel>, PublicStudentDataModel>().ReverseMap();
         }
     }
 }

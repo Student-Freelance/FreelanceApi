@@ -13,11 +13,13 @@ namespace Freelance_Api.Services
         private readonly IMongoDbContext _context;
         private readonly IMapper _mapper;
         private readonly FilterDefinitionBuilder<CompanyModel> _builder = Builders<CompanyModel>.Filter;
+       
 
         public CompanyService(IMongoDbContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
+         
         }
 
         public async Task<List<PublicCompanyDataModel>> GetPublicCompanies()
