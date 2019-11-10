@@ -28,6 +28,10 @@ namespace Freelance_Api.Models.Requests
             [Display(Name = "UserName")]
             public string UserName { get; set; }
             
+            [Required]
+            [Display(Name = "Vat")]
+            public int Vat { get; set; }
+            
         
         }
     }
