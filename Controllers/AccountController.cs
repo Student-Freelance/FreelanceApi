@@ -25,17 +25,19 @@ namespace Freelance_Api.Controllers
         private readonly UserManager<AppUserModel> _userManager;
         private readonly IConfiguration _configuration;
         private readonly IMapper _imapper;
+        private readonly HttpService _httpService;
 
         public AccountController(SignInManager<AppUserModel> signInManager, UserManager<AppUserModel> userManager,
-            IConfiguration configuration, IMapper imapper)
+            IConfiguration configuration, IMapper imapper, HttpService httpService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _configuration = configuration;
             _imapper = imapper;
+            _httpService = httpService;
         }
 
-        [HttpPost ("[Action]")]
+        [HttpPost("[Action]")]
         [AllowAnonymous]
         public async Task<ActionResult> Login([FromBody] LoginModel model)
         {
@@ -77,8 +79,8 @@ namespace Freelance_Api.Controllers
 
             return Ok(response);
         }
-        
-        [HttpPost ("[Action]")]
+
+        [HttpPost("[Action]")]
         [AllowAnonymous]
         public async Task<IActionResult> CampusNetLogin([FromBody] CnUserAuthModel cNUserAuthModelBody)
         {
@@ -95,9 +97,14 @@ namespace Freelance_Api.Controllers
 
             return Ok(responseStatusCode);
         }
-        
-        
-        
-        
+
+        /*[HttpPost("[Action]")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GoogleLogin()
+        {
+           
+            var validPayload = await GoogleJsonWebSignature.ValidateAsync(idToken);
+            Assert.IsNotNull(validPayload);
+        }*/
     }
 }

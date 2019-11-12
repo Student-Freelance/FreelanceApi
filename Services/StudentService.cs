@@ -32,16 +32,12 @@ namespace Freelance_Api.Services
             var returnlist =_mapper.Map<List<PublicStudentDataModel>>(users);
             return returnlist;
         }
-        
-        
 
         public async Task<List<PublicStudentDataModel>>GetStudentsByTag(string tag)
         {
-
             var result = _context.Students.AsQueryable().WhereText(tag).ToList();
             var model = _mapper.Map<List<PublicStudentDataModel>>(result);
             return model;
         }
-        
     }
 }

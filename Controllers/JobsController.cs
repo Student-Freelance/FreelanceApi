@@ -65,11 +65,7 @@ namespace Freelance_Api.Controllers
             {
                 return NotFound();
             }
-
             _jobService.Remove(job.Id);
-
-
-
             return NoContent();
         }
     }

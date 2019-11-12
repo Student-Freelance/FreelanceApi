@@ -6,7 +6,6 @@ using AspNetCore.Identity.Mongo;
 using AutoMapper;
 using Freelance_Api.DatabaseContext;
 using Freelance_Api.Helpers;
-using Freelance_Api.Models;
 using Freelance_Api.Models.Identity;
 using Freelance_Api.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -17,7 +16,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using MongoDB.Bson.Serialization;
+
+
 
 namespace Freelance_Api
 {
@@ -69,6 +69,7 @@ namespace Freelance_Api
 
             // JWT setup in the followin
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
             services.AddAuthentication(options =>
             {
                 //Set  Authentication Schema as Bearer
@@ -106,6 +107,7 @@ namespace Freelance_Api
                     Type = SecuritySchemeType.ApiKey,
                     Scheme = "Bearer"
                 });
+               
 
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement()
                 {
@@ -124,6 +126,7 @@ namespace Freelance_Api
                         new List<string>()
                     }
                 });
+                
 
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "Freelance API", Version = "v1"});
             });

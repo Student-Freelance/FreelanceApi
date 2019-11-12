@@ -5,7 +5,7 @@ namespace Freelance_Api.Models.Identity
 {
     public class AppUserModel: MongoUser
     {
-        public LocationModel LocationModel { get; set; }
+        public LocationModel Location { get; set; }
         public string Website { get; set; }
         
         public string Logo { get; set; }

@@ -10,8 +10,5 @@ namespace Freelance_Api.Extensions
             var filter = Builders<T>.Filter.Text(search);
             return query.Where(_ => filter.Inject());
         }
-        
-    
-        
     }
 }

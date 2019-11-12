@@ -29,5 +29,13 @@ namespace Freelance_Api.Services
             var returnlist = _mapper.Map<List<PublicCompanyDataModel>>(users);
             return returnlist;
         }
+        
+        public async Task<PublicCompanyDataModel> GetCompanyById(string companyname)
+        {
+            var filter = _builder.Eq("_t", "CompanyModel") & _builder.Eq(e=> e.CompanyName, companyname);
+            var mongouser = await _context.Companies.Find(filter).FirstOrDefaultAsync();
+            var returnuser = _mapper.Map<PublicCompanyDataModel>(mongouser);
+            return returnuser;
+        }
     }
 }

@@ -13,7 +13,7 @@ namespace Freelance_Api.Models
         public string CompanyName { get; set; }
         public string Title { get; set; }
         public int Salary { get; set; }
-        public string Location { get; set; }
+        public LocationModel Location { get; set; }
         public string Description { get; set; }
         public string[] Tags { get; set; }
         public bool PaidMonthly { get; set; }

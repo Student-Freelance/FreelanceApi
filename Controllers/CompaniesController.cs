@@ -44,17 +44,32 @@ namespace Freelance_Api.Controllers
             _companyService.GetPublicCompanies();
 
 
+        [HttpGet("{companyname}")]
+        [AllowAnonymous]
+        public async Task<ActionResult<PublicCompanyDataModel>> Get(string companyname)
+        {
+            var user = await _companyService.GetCompanyById(companyname);
+
+            return user ?? (ActionResult<PublicCompanyDataModel>) NotFound("Company not found");
+        }
+
+
         [HttpPost]
         [AllowAnonymous]
         public async Task<IActionResult> Post([FromBody] RegisterCompanyModel model)
         {
             if (ModelState.IsValid)
             {
-                var user = new CompanyModel
+                /*var user = new CompanyModel
                 {
-                    UserName = model.UserName, Email = model.Email, CreatedOn = DateTime.Now, ModifiedOn = DateTime.Now,
-                    CompanyName = model.CompanyName
-                };
+                    UserName = model.UserName, 
+                    Email = model.Email, 
+                    CreatedOn = DateTime.Now, 
+                    ModifiedOn = DateTime.Now,
+                    CompanyName = model.CompanyName, 
+                    Vat = model.Vat
+                };*/
+               var user = _imapper.Map<CompanyModel>(model);
                 var result = await _userManager.CreateAsync(user, model.Password);
 
                 if (!result.Succeeded)
@@ -66,7 +81,7 @@ namespace Freelance_Api.Controllers
                 await _signInManager.SignInAsync(user, false);
                 var token = JwtHelperService.GenerateJwtToken(model.Email, user, _configuration);
                 var rootData = new LoginResponseModel(token);
-                return Ok(rootData);
+                return Created("Created", rootData);
             }
 
             var errorMessage =

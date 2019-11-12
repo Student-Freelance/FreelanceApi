@@ -22,7 +22,6 @@ namespace Freelance_Api.DatabaseContext
 
         public MongoClient Client { get; set; }
         public IMongoDatabase DatabaseBase { get; set; }
-        
         public IMongoCollection<CompanyModel> Companies { get; set; }
         public IMongoCollection<StudentModel> Students { get; set; }
         public IMongoCollection<JobModel> Jobs { get; set; }
