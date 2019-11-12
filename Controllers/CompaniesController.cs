@@ -60,16 +60,7 @@ namespace Freelance_Api.Controllers
         {
             if (ModelState.IsValid)
             {
-                /*var user = new CompanyModel
-                {
-                    UserName = model.UserName, 
-                    Email = model.Email, 
-                    CreatedOn = DateTime.Now, 
-                    ModifiedOn = DateTime.Now,
-                    CompanyName = model.CompanyName, 
-                    Vat = model.Vat
-                };*/
-               var user = _imapper.Map<CompanyModel>(model);
+                var user = _imapper.Map<CompanyModel>(model);
                 var result = await _userManager.CreateAsync(user, model.Password);
 
                 if (!result.Succeeded)

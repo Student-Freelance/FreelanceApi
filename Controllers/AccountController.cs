@@ -9,6 +9,7 @@ using Freelance_Api.Models.Identity;
 using Freelance_Api.Models.Requests;
 using Freelance_Api.Models.Responses;
 using Freelance_Api.Services;
+using Google.Apis.Auth;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -98,13 +99,41 @@ namespace Freelance_Api.Controllers
             return Ok(responseStatusCode);
         }
 
-        /*[HttpPost("[Action]")]
+        [HttpPost("[Action]")]
         [AllowAnonymous]
-        public async Task<IActionResult> GoogleLogin()
+        public async Task<IActionResult> GoogleAuth([FromBody] TokenModel model)
         {
-           
-            var validPayload = await GoogleJsonWebSignature.ValidateAsync(idToken);
-            Assert.IsNotNull(validPayload);
-        }*/
+          
+            if (!ModelState.IsValid) return Unauthorized("Google token is invalid");
+            var validPayload = await GoogleJsonWebSignature.ValidateAsync(model.access_token);
+            if (validPayload == null) return Unauthorized("Google token is invalid");
+            var appUser = _userManager.Users.SingleOrDefault(r => r.Email == validPayload.Email);
+
+            if (appUser != null)
+            {
+                await _signInManager.SignInAsync(appUser, false);
+                var token =JwtHelperService.GenerateJwtToken(validPayload.Name, appUser, _configuration);
+                var rootData = new LoginResponseModel(token);
+                return Ok(rootData);
+            }
+            {   
+                var user = new StudentModel
+                {
+                    Firstname = validPayload.GivenName, Lastname = validPayload.FamilyName, UserName = validPayload.GivenName,
+                    Email = validPayload.Email, Logo = validPayload.Picture,
+                    CreatedOn = DateTime.Now, ModifiedOn = DateTime.Now
+                };
+                var result = await _userManager.CreateAsync(user);
+                if (!result.Succeeded)
+                {
+                    return BadRequest(string.Join(",",
+                        result.Errors?.Select(error => error.Description) ?? throw new InvalidOperationException()));
+                }
+                await _signInManager.SignInAsync(user, false);
+                var token =JwtHelperService.GenerateJwtToken(validPayload.Name, user, _configuration);
+                var rootData = new LoginResponseModel(token);
+                return Ok(rootData);
+            }
+        }
     }
 }
