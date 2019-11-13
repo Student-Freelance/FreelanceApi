@@ -4,7 +4,6 @@ using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using Freelance_Api.Models;
-using Freelance_Api.Models.CampusNet;
 using Freelance_Api.Models.Identity;
 using Freelance_Api.Models.Requests;
 using Freelance_Api.Models.Responses;
@@ -26,16 +25,14 @@ namespace Freelance_Api.Controllers
         private readonly UserManager<AppUserModel> _userManager;
         private readonly IConfiguration _configuration;
         private readonly IMapper _imapper;
-        private readonly HttpService _httpService;
 
         public AccountController(SignInManager<AppUserModel> signInManager, UserManager<AppUserModel> userManager,
-            IConfiguration configuration, IMapper imapper, HttpService httpService)
+            IConfiguration configuration, IMapper imapper)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _configuration = configuration;
             _imapper = imapper;
-            _httpService = httpService;
         }
 
         [HttpPost("[Action]")]
@@ -46,7 +43,8 @@ namespace Freelance_Api.Controllers
             {
                 var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, false, false);
                 if (!result.Succeeded) return StatusCode((int) HttpStatusCode.Unauthorized, "Bad Credentials");
-                var appUser = _userManager.Users.SingleOrDefault(r => r.UserName == model.UserName);
+                var appUser = _userManager.Users.FirstOrDefault(r => r.UserName == model.UserName);
+                Console.WriteLine(appUser);
                 var token = JwtHelperService.GenerateJwtToken(model.UserName, appUser, _configuration);
                 var rootData = new LoginResponseModel(token);
                 return Ok(rootData);
@@ -57,11 +55,11 @@ namespace Freelance_Api.Controllers
             return BadRequest(errorMessage ?? "Bad Request");
         }
 
+
         [HttpGet]
         public async Task<ActionResult> Get()
         {
             object response = null;
-
             var user = await _userManager.GetUserAsync(User);
             if (user.GetType() == typeof(StudentModel))
             {
@@ -81,7 +79,7 @@ namespace Freelance_Api.Controllers
             return Ok(response);
         }
 
-        [HttpPost("[Action]")]
+        /*[HttpPost("[Action]")]
         [AllowAnonymous]
         public async Task<IActionResult> CampusNetLogin([FromBody] CnUserAuthModel cNUserAuthModelBody)
         {
@@ -97,29 +95,42 @@ namespace Freelance_Api.Controllers
             }
 
             return Ok(responseStatusCode);
+        }*/
+
+        [HttpPost("[Action]")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePwModel model)
+        {
+            if (!ModelState.IsValid) return BadRequest("Bad Credentials");
+            var user = await _userManager.GetUserAsync(User);
+            var result = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
+            if (result.Succeeded) return Ok("User Updated");
+
+
+            return BadRequest(result.Errors);
         }
 
         [HttpPost("[Action]")]
         [AllowAnonymous]
         public async Task<IActionResult> GoogleAuth([FromBody] TokenModel model)
         {
-          
             if (!ModelState.IsValid) return Unauthorized("Google token is invalid");
             var validPayload = await GoogleJsonWebSignature.ValidateAsync(model.access_token);
             if (validPayload == null) return Unauthorized("Google token is invalid");
-            var appUser = _userManager.Users.SingleOrDefault(r => r.Email == validPayload.Email);
+            var appUser = _userManager.Users.FirstOrDefault(r => r.Email == validPayload.Email);
 
             if (appUser != null)
             {
                 await _signInManager.SignInAsync(appUser, false);
-                var token =JwtHelperService.GenerateJwtToken(validPayload.Name, appUser, _configuration);
+                var token = JwtHelperService.GenerateJwtToken(validPayload.Name, appUser, _configuration);
                 var rootData = new LoginResponseModel(token);
                 return Ok(rootData);
             }
-            {   
+
+            {
                 var user = new StudentModel
                 {
-                    Firstname = validPayload.GivenName, Lastname = validPayload.FamilyName, UserName = validPayload.GivenName,
+                    Firstname = validPayload.GivenName, Lastname = validPayload.FamilyName,
+                    UserName = validPayload.GivenName,
                     Email = validPayload.Email, Logo = validPayload.Picture,
                     CreatedOn = DateTime.Now, ModifiedOn = DateTime.Now
                 };
@@ -129,8 +140,9 @@ namespace Freelance_Api.Controllers
                     return BadRequest(string.Join(",",
                         result.Errors?.Select(error => error.Description) ?? throw new InvalidOperationException()));
                 }
+
                 await _signInManager.SignInAsync(user, false);
-                var token =JwtHelperService.GenerateJwtToken(validPayload.Name, user, _configuration);
+                var token = JwtHelperService.GenerateJwtToken(validPayload.Name, user, _configuration);
                 var rootData = new LoginResponseModel(token);
                 return Ok(rootData);
             }
