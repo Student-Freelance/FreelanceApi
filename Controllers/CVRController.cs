@@ -1,14 +1,15 @@
 using System.Threading.Tasks;
 using Freelance_Api.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
 namespace Freelance_Api.Controllers
 {
-    [AllowAnonymous]
     [ApiController]
     // ReSharper disable once InconsistentNaming
+   // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class CVRController : ControllerBase
     {
         [HttpGet("/{option}/{param}")]

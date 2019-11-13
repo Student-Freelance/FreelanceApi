@@ -39,8 +39,8 @@ namespace Freelance_Api.Services
 
             return responseStatusCode;
         }
-
-        public static async Task<HttpResponseMessage> GithubReposHttpRequestAsync(string userNameFromQuery, string repo)
+        #nullable enable
+        public static async Task<HttpResponseMessage> GithubReposHttpRequestAsync(string userNameFromQuery, string? repo)
         {
             Client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent",
                 "Freelance-Portal");

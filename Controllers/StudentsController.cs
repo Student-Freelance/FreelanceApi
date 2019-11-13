@@ -46,12 +46,11 @@ namespace Freelance_Api.Controllers
 
         [HttpGet("{tag}")]
         [AllowAnonymous]
-        public Task<List<PublicStudentDataModel>> Get(string tag) =>
+        public List<PublicStudentDataModel> Get(string tag) =>
             _studentService.GetStudentsByTag(tag);
         
 
         [HttpPost]
-        [AllowAnonymous]
         public async Task<IActionResult> Post([FromBody] RegisterStudentModel model)
         {
             if (ModelState.IsValid)

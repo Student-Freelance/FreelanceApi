@@ -9,7 +9,6 @@ namespace Freelance_Api.Models
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
-
         public string CompanyName { get; set; }
         public string Title { get; set; }
         public int Salary { get; set; }

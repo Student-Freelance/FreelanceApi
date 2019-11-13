@@ -16,7 +16,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace Freelance_Api.Controllers
 {
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[controller]")]
     [ApiController]
     public class CompaniesController : ControllerBase
@@ -55,7 +55,6 @@ namespace Freelance_Api.Controllers
 
 
         [HttpPost]
-        [AllowAnonymous]
         public async Task<IActionResult> Post([FromBody] RegisterCompanyModel model)
         {
             if (ModelState.IsValid)
