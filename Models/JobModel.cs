@@ -15,8 +15,7 @@ namespace Freelance_Api.Models
         public LocationModel Location { get; set; }
         public string Description { get; set; }
         public string[] Tags { get; set; }
-        public bool PaidMonthly { get; set; }
-        public bool PaidHourly { get; set; }
+        public string Payment { get; set; }
         public string Experience { get; set; }
         public int Freelancers { get; set; }
         public DateTime Deadline { get; set; }
