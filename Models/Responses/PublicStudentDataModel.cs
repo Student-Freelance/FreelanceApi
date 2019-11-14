@@ -21,7 +21,7 @@ namespace Freelance_Api.Models.Responses
         public string Email { get; set; }
         public string[] Tags { get; set; }
         public string Website { get; set; }
-        public string Avatar { get; set; }
+        public string Logo { get; set; }
         public int Availability { get; set; }
         public string[] Education { get; set; }
         public string[] Experience { get; set; }
