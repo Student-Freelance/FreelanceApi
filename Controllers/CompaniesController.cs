@@ -55,6 +55,7 @@ namespace Freelance_Api.Controllers
 
 
         [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> Post([FromBody] RegisterCompanyModel model)
         {
             if (ModelState.IsValid)
