@@ -88,7 +88,8 @@ namespace Freelance_Api.Controllers
 
             return BadRequest(result.Errors);
         }
-
+        
+        [Obsolete]
         [HttpPost("[Action]")]
         [AllowAnonymous]
         public async Task<IActionResult> GoogleAuth([FromBody] TokenModel model)
@@ -128,6 +129,7 @@ namespace Freelance_Api.Controllers
             }
         }
         
+        [Obsolete]
         [HttpGet("[Action]")]
         [AllowAnonymous]
         public ActionResult CampusNetLogin()
@@ -136,13 +138,13 @@ namespace Freelance_Api.Controllers
             return Redirect("https://auth.dtu.dk/dtu/?service=https://devops01.eitlab.diplom.dtu.dk/api/Account/Callback");
         }
         
+        [Obsolete]
         [HttpGet("[Action]")]
         [AllowAnonymous]
         public async Task<ActionResult> Callback(string ticket)
         {
             try
-            {
-            var response = await HttpService.UserCampusNetAuthHttpRequestAsync(ticket);
+            {var response = await HttpService.UserCampusNetAuthHttpRequestAsync(ticket);
             var valdation =response.Split("\n");
             if (valdation[0].Equals("no"))
             {
@@ -156,6 +158,7 @@ namespace Freelance_Api.Controllers
             {
                 await _signInManager.SignInAsync(appUser, false);
                 var token = JwtHelperService.GenerateJwtToken(username, appUser, _configuration);
+                var rootData = new LoginResponseModel(token);
                 return Redirect($"https://freelance-portal.herokuapp.com?token={token}");
             }
 
@@ -175,7 +178,7 @@ namespace Freelance_Api.Controllers
 
                 await _signInManager.SignInAsync(user, false);
                 var token = JwtHelperService.GenerateJwtToken(username, user, _configuration);
-                return Redirect($"https://freelance-portal.herokuapp.com?token={token}");
+              return Redirect($"https://freelance-portal.herokuapp.com?token={token}");
             }
             }
             catch(Exception e)

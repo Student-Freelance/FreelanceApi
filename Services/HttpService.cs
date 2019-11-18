@@ -19,7 +19,7 @@ namespace Freelance_Api.Services
         {
           
             var url =
-                $"https://auth.dtu.dk/dtu/validate?service=service=https://devops01.eitlab.diplom.dtu.dk/api/Account/Callback&ticket={token}";
+                $"https://auth.dtu.dk/dtu/validate?service=https://devops01.eitlab.diplom.dtu.dk/api/Account/Callback&ticket={token}";
            
             var response = await Client.GetAsync(url);
             var respContent = await response.Content.ReadAsStringAsync();

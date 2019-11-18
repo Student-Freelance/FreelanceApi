@@ -98,6 +98,7 @@ namespace Freelance_Api
             //Swagger setup 
             services.AddSwaggerGen(c =>
             {
+                c.IgnoreObsoleteActions();
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Description =
@@ -127,7 +128,6 @@ namespace Freelance_Api
                     }
                 });
                 
-
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "Freelance API", Version = "v1"});
             });
             var mappingConfig = new MapperConfiguration(mc => { mc.AddProfile(new MappingProfile()); });
