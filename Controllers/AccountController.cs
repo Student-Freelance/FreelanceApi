@@ -44,12 +44,10 @@ namespace Freelance_Api.Controllers
                 var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, false, false);
                 if (!result.Succeeded) return StatusCode((int) HttpStatusCode.Unauthorized, "Bad Credentials");
                 var appUser = _userManager.Users.FirstOrDefault(r => r.UserName == model.UserName);
-                Console.WriteLine(appUser);
                 var token = JwtHelperService.GenerateJwtToken(model.UserName, appUser, _configuration);
                 var rootData = new LoginResponseModel(token);
                 return Ok(rootData);
             }
-
             var errorMessage =
                 string.Join(", ", ModelState.Values.SelectMany(x => x.Errors).Select(x => x.ErrorMessage));
             return BadRequest(errorMessage ?? "Bad Request");
@@ -78,24 +76,6 @@ namespace Freelance_Api.Controllers
 
             return Ok(response);
         }
-
-        /*[HttpPost("[Action]")]
-        [AllowAnonymous]
-        public async Task<IActionResult> CampusNetLogin([FromBody] CnUserAuthModel cNUserAuthModelBody)
-        {
-            int responseStatusCode;
-
-            responseStatusCode = await HttpService.UserCampusNetAuthHttpRequestAsync(cNUserAuthModelBody);
-            Console.WriteLine(responseStatusCode);
-
-
-            if (responseStatusCode == 401)
-            {
-                return BadRequest(ModelState);
-            }
-
-            return Ok(responseStatusCode);
-        }*/
 
         [HttpPost("[Action]")]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePwModel model)
@@ -146,6 +126,64 @@ namespace Freelance_Api.Controllers
                 var rootData = new LoginResponseModel(token);
                 return Ok(rootData);
             }
+        }
+        
+        [HttpGet("[Action]")]
+        [AllowAnonymous]
+        public ActionResult CampusNetLogin()
+        {
+
+            return Redirect("https://auth.dtu.dk/dtu/?service=https://devops01.eitlab.diplom.dtu.dk/api/Account/Callback");
+        }
+        
+        [HttpGet("[Action]")]
+        [AllowAnonymous]
+        public async Task<ActionResult> Callback(string ticket)
+        {
+            try
+            {
+            var response = await HttpService.UserCampusNetAuthHttpRequestAsync(ticket);
+            var valdation =response.Split("\n");
+            if (valdation[0].Equals("no"))
+            {
+                return Unauthorized("Login failed, reply was:" + valdation[0]);
+            }
+            var username = valdation[1];
+            var email = $"{username}@student.dtu.dk";
+            var appUser = _userManager.Users.FirstOrDefault(r => r.Email == email);
+
+            if (appUser != null)
+            {
+                await _signInManager.SignInAsync(appUser, false);
+                var token = JwtHelperService.GenerateJwtToken(username, appUser, _configuration);
+                return Redirect($"https://freelance-portal.herokuapp.com?token={token}");
+            }
+
+            {
+                var user = new StudentModel
+                {
+                    UserName = username,
+                    Email = email,
+                    CreatedOn = DateTime.Now, ModifiedOn = DateTime.Now
+                };
+                var result = await _userManager.CreateAsync(user);
+                if (!result.Succeeded)
+                {
+                    return BadRequest(string.Join(",",
+                        result.Errors?.Select(error => error.Description) ?? throw new InvalidOperationException()));
+                }
+
+                await _signInManager.SignInAsync(user, false);
+                var token = JwtHelperService.GenerateJwtToken(username, user, _configuration);
+                return Redirect($"https://freelance-portal.herokuapp.com?token={token}");
+            }
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e);
+                return StatusCode(500);
+            }
+           
         }
     }
 }

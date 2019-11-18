@@ -15,29 +15,15 @@ namespace Freelance_Api.Services
         private static readonly HttpClient Client = new HttpClient();
         private static readonly string baseApiUrl = "https://cvrapi.dk/api";
 
-        public static async Task<int> UserCampusNetAuthHttpRequestAsync(CnUserAuthModel cnUserAuthModel)
+        public static async Task<string> UserCampusNetAuthHttpRequestAsync(string token)
         {
-            string url = @"https://auth.dtu.dk/dtu/mobilapp.jsp";
-
-
-            HttpContent content = new FormUrlEncodedContent(new[]
-            {
-                new KeyValuePair<string, string>("username", cnUserAuthModel.AuthUsername),
-                new KeyValuePair<string, string>("password", cnUserAuthModel.AuthPassword),
-            });
-
-            content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
-            content.Headers.Add("X-appname", "DTU Inside Companion");
-            content.Headers.Add("X-token", "ae034f83-4bf4-48a9-86c5-a47f03ad6054");
-
-            var response = await Client.PostAsync(url, content);
-
+          
+            var url =
+                $"https://auth.dtu.dk/dtu/validate?service=service=https://devops01.eitlab.diplom.dtu.dk/api/Account/Callback&ticket={token}";
+           
+            var response = await Client.GetAsync(url);
             var respContent = await response.Content.ReadAsStringAsync();
-            Console.WriteLine(respContent);
-
-            var responseStatusCode = (int) response.StatusCode;
-
-            return responseStatusCode;
+            return respContent;
         }
         #nullable enable
         public static async Task<HttpResponseMessage> GithubReposHttpRequestAsync(string userNameFromQuery, string? repo)
