@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using MongoDB.Bson.IO;
 
 namespace Freelance_Api.Controllers
 {
@@ -89,11 +90,12 @@ namespace Freelance_Api.Controllers
                     string.Join(", ", ModelState.Values.SelectMany(x => x.Errors).Select(x => x.ErrorMessage));
                 return BadRequest(errorMessage);
             }
-
+            
             if (!(await _userManager.GetUserAsync(User) is CompanyModel user))
             {
                 return NotFound("User not found");
             }
+
 
             _imapper.Map(model, user);
 

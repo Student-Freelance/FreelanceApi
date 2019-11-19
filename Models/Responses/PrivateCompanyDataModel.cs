@@ -2,6 +2,7 @@
 {
     public class PrivateCompanyDataModel: PublicCompanyDataModel
     {
+     
         public string UserName { get; set; }
         
     }

@@ -11,14 +11,23 @@ namespace Freelance_Api.Helpers
     {
         public MappingProfile()
         {
-            CreateMap<AppUserModel, StudentModel>().ReverseMap();
-            CreateMap<AppUserModel, CompanyModel>().ReverseMap();
-            CreateMap<StudentModel, PrivateStudentDataModel>().ReverseMap();
-            CreateMap<StudentModel, PublicStudentDataModel>().ReverseMap();
-            CreateMap<CompanyModel, PrivateCompanyDataModel>().ReverseMap();
-            CreateMap<CompanyModel, PublicCompanyDataModel>().ReverseMap();
-            CreateMap<RegisterCompanyModel, CompanyModel>().ReverseMap();
-            CreateMap<IMongoQueryable<StudentModel>, PublicStudentDataModel>().ReverseMap();
+            CreateMap<AppUserModel, StudentModel>().ReverseMap().ForAllMembers(opt =>
+                opt.Condition((source, dest, sourceMember, destMember) => (sourceMember != null)));
+            CreateMap<AppUserModel, CompanyModel>().ReverseMap().ForAllMembers(opt =>
+                opt.Condition((source, dest, sourceMember, destMember) => (sourceMember != null)));
+            CreateMap<StudentModel, PrivateStudentDataModel>().ReverseMap().ForAllMembers(opt =>
+                opt.Condition((source, dest, sourceMember, destMember) => (sourceMember != null)));
+            CreateMap<StudentModel, PublicStudentDataModel>().ReverseMap().ForAllMembers(opt =>
+                opt.Condition((source, dest, sourceMember, destMember) => (sourceMember != null)));
+            CreateMap<CompanyModel, PrivateCompanyDataModel>().ReverseMap().ForAllMembers(opt =>
+                opt.Condition((source, dest, sourceMember, destMember) => (sourceMember != null)));
+            CreateMap<CompanyModel, PublicCompanyDataModel>().ReverseMap().ForAllMembers(opt =>
+                opt.Condition((source, dest, sourceMember, destMember) => (sourceMember != null)));
+            CreateMap<RegisterCompanyModel, CompanyModel>().ReverseMap().ForAllMembers(opt =>
+                opt.Condition((source, dest, sourceMember, destMember) => (sourceMember != null)));
+            CreateMap<IMongoQueryable<StudentModel>, PublicStudentDataModel>().ReverseMap().ForAllMembers(opt =>
+                opt.Condition((source, dest, sourceMember, destMember) => (sourceMember != null)));
+         
         }
     }
 }
