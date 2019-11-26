@@ -10,13 +10,17 @@ docker build --tag apitest:latest . '''
 
     stage('Deploy') {
       steps {
-        sh '''if [ !"$(docker ps -q -f name=freeapitest)" ]; then
-    if [ "$(docker ps -aq -f status=exited -f name=freeapitest)" ]; then
-        # cleanup
-        docker rm freeapitest
-    fi
-    docker run -d -p 5000:80 --env ConnectionString=$connectionString --env DatabaseName=$DatabaseName --env JobCollectionName=$JobCollectionName --env JwtIssuer=$JwtIssuer --env JwtKey=$JwtKey --name freeapitest apitest:latest
+        sh '''CONTAINER=$1
+ 
+RUNNING=$(docker inspect --format="{{ .State.Running }}" $freeapitest 2> /dev/null)
+
+if [ $? -eq 1 ]; then
+  echo "\'$freeapitest \' does not exist."
+else
+  /usr/bin/docker rm --force $freeapitest 
 fi
+    docker run -d -p 5000:80 --env ConnectionString=$connectionString --env DatabaseName=$DatabaseName --env JobCollectionName=$JobCollectionName --env JwtIssuer=$JwtIssuer --env JwtKey=$JwtKey --name freeapitest apitest:latest
+
 
 '''
       }
