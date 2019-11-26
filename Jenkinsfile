@@ -10,7 +10,7 @@ docker build --tag apitest:latest . '''
 
     stage('Deploy') {
       steps {
-        sh '''if [ "$(docker ps -q -f name=freeapitest)" ]; then
+        sh '''if [ !"$(docker ps -q -f name=freeapitest)" ]; then
     if [ "$(docker ps -aq -f status=exited -f name=freeapitest)" ]; then
         # cleanup
         docker rm freeapitest
