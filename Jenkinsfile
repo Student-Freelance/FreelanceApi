@@ -14,9 +14,9 @@ docker build --tag apitest:latest . '''
     if [ "$(docker ps -aq -f status=exited -f name=freeapitest)" ]; then
         # cleanup
         docker rm freeapitest
+    fi
+    docker run -d -p 5000:80 --env ConnectionString=$ConnectionString --env DatabaseName=$DatabaseName --env JobCollectionName=$JobCollectionName --env JwtIssuer=$JwtIssuer --env JwtKey=$JwtKey --name freeapitest apitest:latest
 fi
-docker run -d -p 5000:80 --env ConnectionString=$ConnectionString --env DatabaseName=$DatabaseName --env JobCollectionName=$JobCollectionName --env JwtIssuer=$JwtIssuer --env JwtKey=$JwtKey --name freeapitest apitest:latest
-
 
 '''
       }
