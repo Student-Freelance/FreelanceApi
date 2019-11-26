@@ -135,7 +135,7 @@ namespace Freelance_Api.Controllers
         public ActionResult CampusNetLogin()
         {
 
-            return Redirect("https://auth.dtu.dk/dtu/?service=https://devops01.eitlab.diplom.dtu.dk/api/Account/Callback");
+            return Redirect("https://auth.dtu.dk/dtu/?service=https://devops01.eitlab.diplom.dtu.dk/backend/api/Account/Callback");
         }
         
         [Obsolete]
