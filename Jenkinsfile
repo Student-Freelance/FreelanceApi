@@ -4,7 +4,7 @@ pipeline {
     stage('Build') {
       steps {
         sh '''cd Backend
-docker build . --tag Apitest:latest'''
+docker build --tag apitest:latest . '''
       }
     }
 
