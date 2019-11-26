@@ -69,11 +69,8 @@ namespace Freelance_Api.Controllers
                     return BadRequest(string.Join(",",
                         result.Errors?.Select(error => error.Description) ?? throw new InvalidOperationException()));
                 }
-
-                await _signInManager.SignInAsync(user, false);
-                var token = JwtHelperService.GenerateJwtToken(model.Email, user, _configuration);
-                var rootData = new LoginResponseModel(token);
-                return Created("Created", rootData);
+                var created = new JsonResult("User created") {StatusCode = 201};
+                return Ok(created);
             }
 
             var errorMessage =
@@ -100,14 +97,13 @@ namespace Freelance_Api.Controllers
             _imapper.Map(model, user);
 
             var result = await _userManager.UpdateAsync(user);
-
+        
             if (!result.Succeeded)
             {
                 return BadRequest(string.Join(",",
                     result.Errors?.Select(error => error.Description) ?? throw new InvalidOperationException()));
             }
-
-            return Ok("User Updated");
+            return Ok(result);
         }
     }
 }

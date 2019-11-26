@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using Freelance_Api.Models;
@@ -10,6 +11,7 @@ using Freelance_Api.Models.Responses;
 using Freelance_Api.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -70,10 +72,8 @@ namespace Freelance_Api.Controllers
                         result.Errors?.Select(error => error.Description) ?? throw new InvalidOperationException()));
                 }
 
-                await _signInManager.SignInAsync(user, false);
-                var token = JwtHelperService.GenerateJwtToken(model.Email, user, _configuration);
-                var rootData = new LoginResponseModel(token);
-                return Ok(rootData);
+                var created = new JsonResult("User created") {StatusCode = 201};
+                return Ok(created);
             }
 
             var errorMessage =
