@@ -22,5 +22,11 @@ fi
       }
     }
 
+    stage('Done') {
+      steps {
+        mail(subject: 'Build done', body: 'Build completed and backend has been deployed', from: 'Jenkins', to: 'emilvinkel@gmail.com')
+      }
+    }
+
   }
 }
