@@ -10,7 +10,7 @@ docker build --tag apitest:latest . '''
 
     stage('Deploy') {
       steps {
-        sh '''CONTAINER=$1
+        sh '''CONTAINER=$freeapitest
  
 RUNNING=$(docker inspect --format="{{ .State.Running }}" $freeapitest 2> /dev/null)
 
