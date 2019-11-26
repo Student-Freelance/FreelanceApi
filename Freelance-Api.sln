@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freelance-Api", "Freelance-Api.csproj", "{C72789ED-8AEF-4B11-91EE-BE5508E20F4A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freelance-Api", "Backend\Freelance-Api.csproj", "{C72789ED-8AEF-4B11-91EE-BE5508E20F4A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{F661B8C9-7BB1-423E-A411-DAD6BA7C2614}"
 EndProject
