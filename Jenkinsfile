@@ -17,12 +17,4 @@ docker build --tag apitest:latest . '''
     }
 
   }
-  environment {
-    ConnectionString = 'mongodb+srv://EmilVinkel:CS26WX0gSk1ox3xx@cluster0-bmthv.mongodb.net/Freelance-database?retryWrites=true&w=majority'
-    DatabaseName = 'Freelance-database'
-    JwtIssuer = 'FreelanceApi'
-    JwtKey = 'y0fqoJPTsE4eeKSf'
-    StudentCollectionName = 'Student'
-    JobCollectionName = 'Jobs'
-  }
 }
