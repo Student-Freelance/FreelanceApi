@@ -159,7 +159,7 @@ namespace Freelance_Api.Controllers
                 await _signInManager.SignInAsync(appUser, false);
                 var token = JwtHelperService.GenerateJwtToken(username, appUser, _configuration);
                 var rootData = new LoginResponseModel(token);
-                return Redirect($"https://freelance-portal.herokuapp.com?token={token}");
+                return Redirect($"https://devops01.eitlab.diplom.dtu.dk?token={token}");
             }
 
             {
@@ -178,7 +178,7 @@ namespace Freelance_Api.Controllers
 
                 await _signInManager.SignInAsync(user, false);
                 var token = JwtHelperService.GenerateJwtToken(username, user, _configuration);
-              return Redirect($"https://freelance-portal.herokuapp.com?token={token}");
+              return Redirect($"https://devops01.eitlab.diplom.dtu.dk?token={token}");
             }
             }
             catch(Exception e)
