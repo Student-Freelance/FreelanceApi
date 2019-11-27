@@ -166,6 +166,8 @@ namespace Freelance_Api.Controllers
                 var user = new StudentModel
                 {
                     UserName = username,
+                    Firstname = username,
+                    Lastname = "",
                     Email = email,
                     CreatedOn = DateTime.Now, ModifiedOn = DateTime.Now
                 };
