@@ -147,18 +147,7 @@ namespace Freelance_Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            var basePath = "/backend";
-            app.UsePathBase(new PathString(basePath));
-           
-            app.UseSwagger(c =>
-            {
-                c.SerializeAsV2 = true;
-                c.RouteTemplate = "swagger/{documentName}/swagger.json";
-                c.PreSerializeFilters.Add((swaggerDoc, httpReq) =>
-                {
-                    swaggerDoc.Servers = new List<OpenApiServer> { new OpenApiServer { Url = $"https://{httpReq.Host.Value}{basePath}" } };
-                });
-            });
+         
             app.UseSwaggerUI(c =>
             {
                 c.RoutePrefix = string.Empty;

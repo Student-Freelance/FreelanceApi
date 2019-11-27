@@ -135,7 +135,7 @@ namespace Freelance_Api.Controllers
         public ActionResult CampusNetLogin()
         {
 
-            return Redirect("https://auth.dtu.dk/dtu/?service=https://devops01.eitlab.diplom.dtu.dk/backend/api/Account/Callback");
+            return Redirect("https://auth.dtu.dk/dtu/?service=https://devops01.eitlab.diplom.dtu.dk/api/Account/Callback");
         }
         
         [Obsolete]
@@ -159,7 +159,7 @@ namespace Freelance_Api.Controllers
                 await _signInManager.SignInAsync(appUser, false);
                 var token = JwtHelperService.GenerateJwtToken(username, appUser, _configuration);
                 var rootData = new LoginResponseModel(token);
-                return Redirect($"https://devops01.eitlab.diplom.dtu.dk?token={token}");
+                return Redirect($"https://devops01.eitlab.diplom.dtu.dk/free?token={token}");
             }
 
             {
@@ -178,7 +178,7 @@ namespace Freelance_Api.Controllers
 
                 await _signInManager.SignInAsync(user, false);
                 var token = JwtHelperService.GenerateJwtToken(username, user, _configuration);
-              return Redirect($"https://devops01.eitlab.diplom.dtu.dk?token={token}");
+              return Redirect($"https://devops01.eitlab.diplom.dtu.dk/free?token={token}");
             }
             }
             catch(Exception e)
