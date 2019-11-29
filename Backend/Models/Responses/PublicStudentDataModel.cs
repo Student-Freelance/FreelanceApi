@@ -26,7 +26,7 @@ namespace Freelance_Api.Models.Responses
         public string[] Education { get; set; }
         public string[] Experience { get; set; }
         public string[] Competences { get; set; }
-        public string[] Resume { get; set; }
+        public string Resume { get; set; }
         
 
     }

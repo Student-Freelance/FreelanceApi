@@ -10,7 +10,7 @@ namespace Freelance_Api.Models
         public string[] Education { get; set; }
         public string[] Experience { get; set; }
         public string[] Competences { get; set; }
-        public string[] Resume { get; set; }
+        public string Resume { get; set; }
         public int Availability { get; set; }
         public string Firstname { get; set; }
         public string Lastname { get; set; }
