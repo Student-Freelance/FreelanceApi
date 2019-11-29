@@ -103,7 +103,8 @@ namespace Freelance_Api.Controllers
                 return BadRequest(string.Join(",",
                     result.Errors?.Select(error => error.Description) ?? throw new InvalidOperationException()));
             }
-            return Ok(result);
+            var created = new JsonResult("User created") {StatusCode = 201};
+            return Ok(created);
         }
     }
 }
