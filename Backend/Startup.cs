@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
@@ -46,7 +47,13 @@ namespace Freelance_Api
                         //  builder.WithOrigins("https://freelance-portal.herokuapp.com/");
                     });
             });
-
+                services.AddLogging(builder =>
+                builder
+                    .AddDebug()
+                    .AddConsole()
+                    .AddConfiguration(Configuration.GetSection("Logging"))
+                    .SetMinimumLevel(LogLevel.Warning)
+            );
 
             var dbcontext = new MongoDbContext(Environment.GetEnvironmentVariable("ConnectionString"),
                 Environment.GetEnvironmentVariable("DatabaseName"),
