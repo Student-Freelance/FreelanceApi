@@ -20,7 +20,7 @@ docker run -d -p 5000:80 --env ConnectionString=$connectionString --env Database
 
     stage('Logging') {
       steps {
-        sh 'docker logs -f freeapitest > output.log'
+        sh 'docker logs freeapitest > output.log'
       }
     }
 
