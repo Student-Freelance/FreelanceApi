@@ -18,9 +18,9 @@ docker run -d -p 5000:80 --env ConnectionString=$connectionString --env Database
       }
     }
 
-    stage('Done') {
+    stage('Logging') {
       steps {
-        echo 'Done'
+        sh 'docker logs -f freeapitest |tee output.log'
       }
     }
 
