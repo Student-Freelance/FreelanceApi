@@ -111,7 +111,7 @@ namespace Freelance_Api.Controllers
                 var user = new StudentModel
                 {
                     Firstname = validPayload.GivenName, Lastname = validPayload.FamilyName,
-                    UserName = validPayload.GivenName, LocationModel = new LocationModel(),
+                    UserName = validPayload.GivenName, LocationModel = new LocationModel{Street = "",City = "", Number = "", Zip = ""},
                     Email = validPayload.Email, Logo = validPayload.Picture,
                     CreatedOn = DateTime.Now, ModifiedOn = DateTime.Now
                 };
@@ -169,7 +169,7 @@ namespace Freelance_Api.Controllers
                     Firstname = username,
                     Lastname = "",
                     Email = email,
-                    LocationModel = new LocationModel(),
+                    LocationModel = new LocationModel{Street = "",City = "", Number = "", Zip = ""},
                     CreatedOn = DateTime.Now, ModifiedOn = DateTime.Now
                 };
                 var result = await _userManager.CreateAsync(user);

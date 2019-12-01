@@ -61,7 +61,7 @@ namespace Freelance_Api.Controllers
                 var user = new StudentModel
                 {
                     Firstname = model.FirstName, Lastname = model.LastName, UserName = model.UserName,
-                    Email = model.Email, LocationModel = new LocationModel(),
+                    Email = model.Email, LocationModel = new LocationModel{Street = "",City = "", Number = "", Zip = ""},
                     CreatedOn = DateTime.Now, ModifiedOn = DateTime.Now
                 };
                 var result = await _userManager.CreateAsync(user, model.Password);

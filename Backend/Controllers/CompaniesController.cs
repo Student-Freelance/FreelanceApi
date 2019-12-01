@@ -62,7 +62,7 @@ namespace Freelance_Api.Controllers
             if (ModelState.IsValid)
             {
                 var user = _imapper.Map<CompanyModel>(model);
-                user.LocationModel = new LocationModel();
+                user.LocationModel =  new LocationModel{Street = "",City = "", Number = "", Zip = ""}
                 var result = await _userManager.CreateAsync(user, model.Password);
 
                 if (!result.Succeeded)
