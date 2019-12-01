@@ -9,6 +9,7 @@ namespace Freelance_Api.Services
     public class JobService 
     {
         private readonly IMongoDbContext _context;
+        
 
         public JobService(IMongoDbContext context)
         {
@@ -23,11 +24,11 @@ namespace Freelance_Api.Services
 
         
         
-        public JobModel Create(JobModel jobModel)
+        public string Create(JobModel jobModel)
         {
             jobModel.Id = ObjectId.GenerateNewId().ToString();
             _context.Jobs.InsertOne(jobModel);
-            return jobModel;
+            return jobModel.Id;
         }
 
         public void Update(string id, JobModel jobin) =>

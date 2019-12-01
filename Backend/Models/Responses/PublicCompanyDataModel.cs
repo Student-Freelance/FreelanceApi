@@ -1,4 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Freelance_Api.Models.Responses
 {
@@ -14,7 +17,7 @@ namespace Freelance_Api.Models.Responses
 
         public string Logo { get; set; }
 
-        public JobModel[] Jobs { get; set; }
+        public List<string> Jobs { get; set; }
 
         public string Website { get; set; }
 
