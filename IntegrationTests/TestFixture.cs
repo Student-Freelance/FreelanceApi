@@ -1,108 +1,84 @@
 ﻿using System;
-using System.IO;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Reflection;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.ApplicationParts;
-using Microsoft.AspNetCore.Mvc.Controllers;
-using Microsoft.AspNetCore.Mvc.ViewComponents;
-using Microsoft.AspNetCore.TestHost;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+using System.Text;
+using System.Threading.Tasks;
+using Freelance_Api;
+using Freelance_Api.Models.Requests;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Newtonsoft.Json;
+using Xunit;
+using Xunit.Abstractions;
 
 namespace Tests
 {
-    namespace Tests
+    public class TestFixture
+        : IClassFixture<WebApplicationFactory<Startup>>
     {
-        public class TestFixture<TStartup> : IDisposable
+        private readonly WebApplicationFactory<Startup> _factory;
+        private readonly ITestOutputHelper _testOutputHelper;
+
+        public TestFixture(WebApplicationFactory<Startup> factory, ITestOutputHelper testOutputHelper)
         {
-            public static string GetProjectPath(string projectRelativePath, Assembly startupAssembly)
+            _factory = factory;
+            _testOutputHelper = testOutputHelper;
+        }
+
+        [Theory]
+        [InlineData("https://localhost:5001/api/Students")]
+        [InlineData("https://localhost:5001/api/Companies")]
+        [InlineData("https://localhost:5001/api/Jobs")]
+        public async Task Get_EndpointsReturnSuccessAndCorrectContentType(string url)
+        {
+            // Arrange
+            var client = _factory.CreateClient();
+
+            // Act
+            var response = await client.GetAsync(url);
+            _testOutputHelper.WriteLine(response.ToString());
+            // Assert
+            response.EnsureSuccessStatusCode(); // Status Code 200-299
+            Assert.Equal("application/json; charset=utf-8",
+                response.Content.Headers.ContentType.ToString());
+        }
+
+        [Theory]
+        [InlineData("https://localhost:5001/api/Account/Login")]
+        public async Task Post_Login(string url)
+        {
+            // Arrange
+            var client = _factory.CreateClient();
+
+            // Act
+            var login = new LoginModel
             {
-                var projectName = startupAssembly.GetName().Name;
+                UserName = Environment.GetEnvironmentVariable("Testuser"),
+                Password = Environment.GetEnvironmentVariable("Testpassword")
+            };
+            var stringContent =
+                new StringContent(JsonConvert.SerializeObject(login), Encoding.UTF8, "application/json");
+            var response = await client.PostAsync(url, stringContent);
+            // Assert
+            response.EnsureSuccessStatusCode(); // Status Code 200-299
+            Assert.Equal("application/json; charset=utf-8",
+                response.Content.Headers.ContentType.ToString());
+        }
 
-                var applicationBasePath = AppContext.BaseDirectory;
+        [Theory]
+        [InlineData("https://localhost:5001/api/Account/Login")]
+        public async Task Post_Login_Failure(string url)
+        {
+            // Arrange
+            var client = _factory.CreateClient();
 
-                var directoryInfo = new DirectoryInfo(applicationBasePath);
-
-                do
-                {
-                    directoryInfo = directoryInfo.Parent;
-
-                    var projectDirectoryInfo =
-                        new DirectoryInfo(Path.Combine(directoryInfo.FullName, projectRelativePath));
-
-                    if (projectDirectoryInfo.Exists)
-                        if (new FileInfo(Path.Combine(projectDirectoryInfo.FullName, projectName,
-                            $"{projectName}.csproj")).Exists)
-                            return Path.Combine(projectDirectoryInfo.FullName, projectName);
-                } while (directoryInfo.Parent != null);
-
-                throw new Exception(
-                    $"Project root could not be located using the application root {applicationBasePath}.");
-            }
-
-            private TestServer Server;
-
-            public TestFixture()
-                : this(Path.Combine(""))
-            {
-            }
-
-            public HttpClient Client { get; }
-
-            public void Dispose()
-            {
-                Client.Dispose();
-                Server.Dispose();
-            }
-
-            protected virtual void InitializeServices(IServiceCollection services)
-            {
-                var startupAssembly = typeof(TStartup).GetTypeInfo().Assembly;
-
-                var manager = new ApplicationPartManager
-                {
-                    ApplicationParts =
-                    {
-                        new AssemblyPart(startupAssembly)
-                    },
-                    FeatureProviders =
-                    {
-                        new ControllerFeatureProvider(),
-                        new ViewComponentFeatureProvider()
-                    }
-                };
-
-                services.AddSingleton(manager);
-            }
-
-            protected TestFixture(string relativeTargetProjectParentDir)
-            {
-                var startupAssembly = typeof(TStartup).GetTypeInfo().Assembly;
-                var contentRoot = GetProjectPath(relativeTargetProjectParentDir, startupAssembly);
-
-                var configurationBuilder = new ConfigurationBuilder()
-                    .SetBasePath(contentRoot)
-                    .AddJsonFile("appsettings.json");
-
-                var webHostBuilder = new WebHostBuilder()
-                    .UseContentRoot(contentRoot)
-                    .ConfigureServices(InitializeServices)
-                    .UseConfiguration(configurationBuilder.Build())
-                    .UseEnvironment("Development")
-                    .UseStartup(typeof(TStartup));
-
-                // Create instance of test server
-                Server = new TestServer(webHostBuilder);
-
-                // Add configuration for client
-                Client = Server.CreateClient();
-                Client.BaseAddress = new Uri("http://localhost:5001");
-                Client.DefaultRequestHeaders.Accept.Clear();
-                Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            }
+            // Act
+            var login = new LoginModel {UserName = "", Password = ""};
+            var stringContent =
+                new StringContent(JsonConvert.SerializeObject(login), Encoding.UTF8, "application/json");
+            var response = await client.PostAsync(url, stringContent);
+            // Assert
+            Assert.Equal(400, (int) response.StatusCode); //badrequest
+            Assert.Equal("text/plain; charset=utf-8",
+                response.Content.Headers.ContentType.ToString());
         }
     }
 }
-

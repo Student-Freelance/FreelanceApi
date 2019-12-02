@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Freelance_Api.Extensions;
-using Freelance_Api.Models.CampusNet;
 
 namespace Freelance_Api.Services
 
@@ -17,28 +13,30 @@ namespace Freelance_Api.Services
 
         public static async Task<string> UserCampusNetAuthHttpRequestAsync(string token)
         {
-          
             var url =
                 $"https://auth.dtu.dk/dtu/validate?service=https://devops01.eitlab.diplom.dtu.dk/api/Account/Callback&ticket={token}";
-           
+
             var response = await Client.GetAsync(url);
             var respContent = await response.Content.ReadAsStringAsync();
             return respContent;
         }
-        #nullable enable
-        public static async Task<HttpResponseMessage> GithubReposHttpRequestAsync(string userNameFromQuery, string? repo)
+#nullable enable
+        public static async Task<HttpResponseMessage> GithubReposHttpRequestAsync(string userNameFromQuery,
+            string? repo)
         {
             Client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent",
                 "Freelance-Portal");
 
-            var baseApiUrlWithParameter = repo != null ? $"https://api.github.com/users/{userNameFromQuery}/{repo}" : $"https://api.github.com/users/{userNameFromQuery}";
+            var baseApiUrlWithParameter = repo != null
+                ? $"https://api.github.com/users/{userNameFromQuery}/{repo}"
+                : $"https://api.github.com/users/{userNameFromQuery}";
 
 
             var response = await Client.GetAsync(baseApiUrlWithParameter);
 
             return response;
         }
-        
+
         public static async Task<HttpResponseMessage> CvrVatHttpRequestAsync(string searchOption, string searchQuery)
         {
             Client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent",
