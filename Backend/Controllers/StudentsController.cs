@@ -18,7 +18,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace Freelance_Api.Controllers
 {
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles=Role.Student)]
     [Route("api/[controller]")]
     [ApiController]
     public class StudentsController : ControllerBase
@@ -61,6 +61,7 @@ namespace Freelance_Api.Controllers
                 var user = new StudentModel
                 {
                     Firstname = model.FirstName, Lastname = model.LastName, UserName = model.UserName,
+                    Role =Role.Student,
                     Email = model.Email, LocationModel = new LocationModel{Street = "",City = "", Number = "", Zip = ""},
                     CreatedOn = DateTime.Now, ModifiedOn = DateTime.Now
                 };

@@ -7,9 +7,8 @@ namespace Freelance_Api.Models.Identity
     {
         public LocationModel LocationModel { get; set; }
         public string Website { get; set; }
-        
+        public string Role { get; set; }
         public string Logo { get; set; }
-        
         public DateTime CreatedOn { get; set; }
         public DateTime ModifiedOn { get; set; }
     }

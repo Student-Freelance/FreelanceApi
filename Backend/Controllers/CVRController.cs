@@ -10,6 +10,7 @@ namespace Freelance_Api.Controllers
     [ApiController]
     // ReSharper disable once InconsistentNaming
    // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    //TODO Find a use for this.
     public class CVRController : ControllerBase
     {
         [HttpGet("/{option}/{param}")]

@@ -17,7 +17,7 @@ using MongoDB.Bson.IO;
 
 namespace Freelance_Api.Controllers
 {
-    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,Roles=Role.Company)]
     [Route("api/[controller]")]
     [ApiController]
     public class CompaniesController : ControllerBase
@@ -63,6 +63,7 @@ namespace Freelance_Api.Controllers
             {
                 var user = _imapper.Map<CompanyModel>(model);
                 user.LocationModel = new LocationModel {Street = "", City = "", Number = "", Zip = ""};
+                user.Role = Role.Company;
                 var result = await _userManager.CreateAsync(user, model.Password);
 
                 if (!result.Succeeded)

@@ -48,6 +48,7 @@ namespace Freelance_Api.Controllers
                 var rootData = new LoginResponseModel(token);
                 return Ok(rootData);
             }
+
             var errorMessage =
                 string.Join(", ", ModelState.Values.SelectMany(x => x.Errors).Select(x => x.ErrorMessage));
             return BadRequest(errorMessage ?? "Bad Request");
@@ -88,7 +89,7 @@ namespace Freelance_Api.Controllers
 
             return BadRequest(result.Errors);
         }
-        
+
         [Obsolete]
         [HttpPost("[Action]")]
         [AllowAnonymous]
@@ -110,8 +111,9 @@ namespace Freelance_Api.Controllers
             {
                 var user = new StudentModel
                 {
-                    Firstname = validPayload.GivenName, Lastname = validPayload.FamilyName,
-                    UserName = validPayload.GivenName, LocationModel = new LocationModel{Street = "",City = "", Number = "", Zip = ""},
+                    Firstname = validPayload.GivenName, Lastname = validPayload.FamilyName, Role = Role.Student,
+                    UserName = validPayload.GivenName,
+                    LocationModel = new LocationModel {Street = "", City = "", Number = "", Zip = ""},
                     Email = validPayload.Email, Logo = validPayload.Picture,
                     CreatedOn = DateTime.Now, ModifiedOn = DateTime.Now
                 };
@@ -128,68 +130,70 @@ namespace Freelance_Api.Controllers
                 return Ok(rootData);
             }
         }
-        
+
         [Obsolete]
         [HttpGet("[Action]")]
         [AllowAnonymous]
         public ActionResult CampusNetLogin()
         {
-
-            return Redirect("https://auth.dtu.dk/dtu/?service=https://devops01.eitlab.diplom.dtu.dk/api/Account/Callback");
+            return Redirect(
+                "https://auth.dtu.dk/dtu/?service=https://devops01.eitlab.diplom.dtu.dk/api/Account/Callback");
         }
-        
+
         [Obsolete]
         [HttpGet("[Action]")]
         [AllowAnonymous]
         public async Task<ActionResult> Callback(string ticket)
         {
             try
-            {var response = await HttpService.UserCampusNetAuthHttpRequestAsync(ticket);
-            var valdation =response.Split("\n");
-            if (valdation[0].Equals("no"))
             {
-                return Unauthorized("Login failed, reply was:" + valdation[0]);
-            }
-            var username = valdation[1];
-            var email = $"{username}@student.dtu.dk";
-            var appUser = _userManager.Users.FirstOrDefault(r => r.Email == email);
-
-            if (appUser != null)
-            {
-                await _signInManager.SignInAsync(appUser, false);
-                var token = JwtHelperService.GenerateJwtToken(username, appUser, _configuration);
-                var rootData = new LoginResponseModel(token);
-                return Redirect($"https://freelance-portal.herokuapp.com/?token={token}");
-            }
-
-            {
-                var user = new StudentModel
+                var response = await HttpService.UserCampusNetAuthHttpRequestAsync(ticket);
+                var valdation = response.Split("\n");
+                if (valdation[0].Equals("no"))
                 {
-                    UserName = username,
-                    Firstname = username,
-                    Lastname = "",
-                    Email = email,
-                    LocationModel = new LocationModel{Street = "",City = "", Number = "", Zip = ""},
-                    CreatedOn = DateTime.Now, ModifiedOn = DateTime.Now
-                };
-                var result = await _userManager.CreateAsync(user);
-                if (!result.Succeeded)
-                {
-                    return BadRequest(string.Join(",",
-                        result.Errors?.Select(error => error.Description) ?? throw new InvalidOperationException()));
+                    return Unauthorized("Login failed, reply was:" + valdation[0]);
                 }
 
-                await _signInManager.SignInAsync(user, false);
-                var token = JwtHelperService.GenerateJwtToken(username, user, _configuration);
-              return Redirect($"https://freelance-portal.herokuapp.com/?token={token}");
+                var username = valdation[1];
+                var email = $"{username}@student.dtu.dk";
+                var appUser = _userManager.Users.FirstOrDefault(r => r.Email == email);
+
+                if (appUser != null)
+                {
+                    await _signInManager.SignInAsync(appUser, false);
+                    var token = JwtHelperService.GenerateJwtToken(username, appUser, _configuration);
+                    return Redirect($"https://freelance-portal.herokuapp.com/?token={token}");
+                }
+
+                {
+                    var user = new StudentModel
+                    {
+                        UserName = username,
+                        Firstname = username,
+                        Role = Role.Student,
+                        Lastname = "",
+                        Email = email,
+                        LocationModel = new LocationModel {Street = "", City = "", Number = "", Zip = ""},
+                        CreatedOn = DateTime.Now, ModifiedOn = DateTime.Now
+                    };
+                    var result = await _userManager.CreateAsync(user);
+                    if (!result.Succeeded)
+                    {
+                        return BadRequest(string.Join(",",
+                            result.Errors?.Select(error => error.Description) ??
+                            throw new InvalidOperationException()));
+                    }
+
+                    await _signInManager.SignInAsync(user, false);
+                    var token = JwtHelperService.GenerateJwtToken(username, user, _configuration);
+                    return Redirect($"https://freelance-portal.herokuapp.com/?token={token}");
+                }
             }
-            }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine(e);
                 return StatusCode(500);
             }
-           
         }
     }
 }

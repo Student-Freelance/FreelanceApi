@@ -59,7 +59,7 @@ namespace Freelance_Api
                 Environment.GetEnvironmentVariable("DatabaseName"),
                 Environment.GetEnvironmentVariable("JobCollectionName"));
             services.AddSingleton<IMongoDbContext>(dbcontext);
-            services.AddIdentityMongoDbProvider<AppUserModel, AppRoleModel>(identityOptions =>
+            services.AddIdentityMongoDbProvider<AppUserModel>(identityOptions =>
                 {
                     identityOptions.Password.RequiredLength = 8;
                     identityOptions.Password.RequireLowercase = true;
@@ -95,10 +95,12 @@ namespace Freelance_Api
                     new TokenValidationParameters
                     {
                         ValidIssuer = Environment.GetEnvironmentVariable("JwtIssuer"),
-                        ValidAudience = Environment.GetEnvironmentVariable("JwtIssuer"),
+                        ValidAudience = "https://freelance-portal.herokuapp.com/",
                         IssuerSigningKey =
                             new SymmetricSecurityKey(
                                 Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JwtKey"))),
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
                         ClockSkew = TimeSpan.Zero
                     };
             });
