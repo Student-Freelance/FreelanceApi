@@ -5,6 +5,10 @@ pipeline {
       steps {
         sh '''
   dotnet test '''
+        warnError(message: 'Tests failed', catchInterruptions: true) {
+          emailext(subject: 'Tests failed', body: 'The tests failed', from: 'Jenkins', to: 'emilvinkel@gmail.com', attachLog: true)
+        }
+
       }
     }
 
@@ -27,7 +31,7 @@ docker run -d -p 5000:80 --env ConnectionString=$ConnectionString --env Database
 
     stage('Finished') {
       steps {
-        echo 'Done'
+        emailext(subject: 'Build completed', body: 'Jenkins Build completed', attachLog: true, to: 'emilvinkel@gmail.com')
       }
     }
 
