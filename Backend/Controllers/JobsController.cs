@@ -14,7 +14,7 @@ namespace Freelance_Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = Role.Company)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = Role.Company )]
     public class JobsController : ControllerBase
     {
         private readonly JobService _jobService;

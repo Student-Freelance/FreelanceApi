@@ -63,6 +63,7 @@ namespace Freelance_Api.Controllers
             {
                 var user = _imapper.Map<CompanyModel>(model);
                 user.LocationModel = new LocationModel {Street = "", City = "", Number = "", Zip = ""};
+                user.Jobs = new List<string>();
                 user.Role = Role.Company;
                 var result = await _userManager.CreateAsync(user, model.Password);
 
