@@ -25,11 +25,5 @@ docker run -d -p 5000:80 --env ConnectionString=$ConnectionString --env Database
       }
     }
 
-    stage('Finished') {
-      steps {
-        mail(to: 'emilvinkel@gmail.com', replyTo: 'noreply@gmail.com', subject: 'Deploymenthas completed', body: 'Deploying backend has completed')
-      }
-    }
-
   }
 }
