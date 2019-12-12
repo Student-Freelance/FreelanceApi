@@ -45,7 +45,7 @@ namespace Freelance_Api.Controllers
             _companyService.GetPublicCompanies();
 
 
-        [HttpGet("{companyname}")]
+        [HttpGet("companyname")]
         [AllowAnonymous]
         public async Task<ActionResult<PublicCompanyDataModel>> Get(string companyname)
         {
