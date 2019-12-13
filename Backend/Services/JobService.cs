@@ -27,7 +27,7 @@ namespace Freelance_Api.Services
         public string Create(JobModel jobModel)
         {
             jobModel.Id = ObjectId.GenerateNewId().ToString();
-            _context.Jobs.InsertOne(jobModel);
+          //  _context.Jobs.InsertOne(jobModel);
             return jobModel.Id;
         }
 
